@@ -4,6 +4,7 @@ const $ = require("jquery");
 let constants = require("../../constants");
 
 const selfId = constants.TOOLS.EDIT;
+let openedOptionsDiv;
 
 const getElement = () => {
   let elt = $("<button></button>");
@@ -28,21 +29,22 @@ const activate = () => {
     event.preventDefault();
   });
 
-  let openedOptionsDiv;
-  $(".pageContainer input,textarea").click(event => {
-    event.preventDefault();
-    if (openedOptionsDiv) {
-      openedOptionsDiv.remove();
-      $(".pageContainer input,textarea").css("outline", "red 2px solid");
-    }
-
-    $(event.target).css("outline", "blue 2px solid");
-    openedOptionsDiv = createOptionsDiv(event.target);
-    $(event.target)
-      .parent()
-      .append(openedOptionsDiv);
-  });
+  $(".pageContainer input,textarea").click(clickFunction);
 };
+
+const clickFunction = (event) => {
+  event.preventDefault();
+  if (openedOptionsDiv) {
+    openedOptionsDiv.remove();
+    $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  }
+
+  $(event.target).css("outline", "blue 2px solid");
+  openedOptionsDiv = createOptionsDiv(event.target);
+  $(event.target)
+    .parent()
+    .append(openedOptionsDiv);
+}
 
 const deactivate = () => {
   console.debug("Deactivating " + selfId);

@@ -1,5 +1,7 @@
 "use strict";
 
+if (require('electron-squirrel-startup')) return;
+
 const { app, BrowserWindow } = require("electron");
 let win;
 const isMac = process.platform === "darwin";

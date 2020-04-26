@@ -22,10 +22,7 @@
           "name": "@electron-forge/maker-squirrel",
           "config": {
             "name": "rpgsheet_forge"
-          },
-          "platforms": [
-            "linux"
-          ]
+          }
         },
         {
           "name": "@electron-forge/maker-zip",
