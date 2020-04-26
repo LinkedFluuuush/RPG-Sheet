@@ -6,7 +6,8 @@ const constants = {
     EDIT: "edit",
     TEXTINPUT: "textInput",
     TEXTAREA: "textArea",
-    CHECKBOX: "checkbox"
+    CHECKBOX: "checkbox",
+    ADDPAGE: "addPage"
   },
   UNEDITABLE_CSS: [
     "top",

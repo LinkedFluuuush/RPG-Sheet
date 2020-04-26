@@ -27,12 +27,7 @@ const generateWelcomeScreen = () => {
   addSheetDiv.addClass("welcomeScreenDiv");
   addSheetDiv.append("<img src='./img/addSheet.svg'></img>");
   addSheetDiv.append("Nouvelle page");
-  addSheetDiv.click(() => {
-    $("#mainContent").empty();
-    pageManager.createNewPage().catch(() => {
-      initApp();
-    });
-  });
+  addSheetDiv.click(require('../components/addPageButton').activate);
 
   let openSheetDiv = $("<div>");
   openSheetDiv.addClass("welcomeScreenDiv");
