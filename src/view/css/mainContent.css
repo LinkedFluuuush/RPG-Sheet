@@ -1,0 +1,66 @@
+body {
+  margin: 0;
+  background-color: lightgray;
+  height: 100%;
+}
+
+#menuBar {
+  float: left;
+  height: 100%;
+  width: 3%;
+  min-width: 50px;
+  background-color: white;
+}
+
+.toolbarButton {
+  margin-left: auto;
+  margin-right: auto;
+  margin-top: 5px;
+  margin-bottom: 0;
+  width: 80%;
+  display: block;
+  padding: 15%;
+}
+
+#mainContent {
+  overflow: auto;
+  display: flex;
+  flex-wrap: wrap;
+  text-align: center;
+  height: 100%;
+}
+
+.welcomeScreenDiv {
+  margin: auto;
+  border: 1px solid grey;
+  border-radius: 10px;
+  padding: 15px;
+}
+
+.pageContainer {
+  background-repeat: no-repeat;
+  background-size: contain;
+  margin-left: auto;
+  margin-right: auto;
+  position: relative;
+  height: fit-content;
+  width: fit-content;
+}
+
+.pageContainer input,
+textarea {
+  margin: 0;
+  resize: none;
+  background-color: transparent;
+}
+
+.pageImgHolder {
+  visibility: hidden;
+  width: 500px;
+}
+
+.pageContainer .optionsDiv {
+  position: absolute;
+  background-color: white;
+  border: 1px solid black;
+}
