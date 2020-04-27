@@ -1,6 +1,6 @@
 {
-  "name": "rpgsheet-forge",
-  "productName": "rpgsheet-forge",
+  "name": "rpgsheet",
+  "productName": "RPG Sheet",
   "version": "1.0.0",
   "description": "My Electron application description",
   "main": "src/main.js",
