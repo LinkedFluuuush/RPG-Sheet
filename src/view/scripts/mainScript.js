@@ -16,7 +16,7 @@ const initApp = (fileName = false) => {
 };
 
 const setWindowTitle = (title = "untitled") => {
-  const name = require("../../../package.json").productName;
+  const name = require("../../../package.json").titleName;
   const version = require("../../../package.json").version;
   $("title").text(title + " - " + name + " - version " + version);
 };
