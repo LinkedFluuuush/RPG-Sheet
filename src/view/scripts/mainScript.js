@@ -1,7 +1,6 @@
 "use strict";
 
 const toolbar = require("./toolbar");
-const pageManager = require("./pages");
 
 const $ = require("jquery");
 
@@ -11,7 +10,7 @@ const initApp = () => {
 };
 
 const setWindowTitle = (title = "untitled") => {
-  const name = require("../../../package.json").name;
+  const name = require("../../../package.json").productName;
   const version = require("../../../package.json").version;
   $("title").text(title + " - " + name + " - version " + version);
 };
@@ -27,7 +26,7 @@ const generateWelcomeScreen = () => {
   addSheetDiv.addClass("welcomeScreenDiv");
   addSheetDiv.append("<img src='./img/addSheet.svg'></img>");
   addSheetDiv.append("Nouvelle page");
-  addSheetDiv.click(require('../components/addPageButton').activate);
+  addSheetDiv.click(require("../components/addPageButton").activate);
 
   let openSheetDiv = $("<div>");
   openSheetDiv.addClass("welcomeScreenDiv");
@@ -43,5 +42,5 @@ const generateWelcomeScreen = () => {
 
 module.exports = {
   initApp,
-  setWindowTitle
+  setWindowTitle,
 };
