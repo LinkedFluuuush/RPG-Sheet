@@ -221,7 +221,7 @@ const createOptionsDiv = (target) => {
   fieldTypeSelect.change(() => {
     components.addComponent(
       fieldTypeSelect.val(),
-      $(target).parent().prop("id"),
+      $(target).parent(),
       {
         x: target.style.left.substring(0, target.style.left.length - 1),
         y: target.style.top.substring(0, target.style.top.length - 1),

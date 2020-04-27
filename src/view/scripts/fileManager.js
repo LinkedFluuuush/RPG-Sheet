@@ -180,7 +180,7 @@ const generateFromData = (data = null) => {
         for (let field of page.fields) {
           components.addComponent(
             field.type,
-            $(pageElement).prop("id"),
+            pageElement,
             field.position,
             field.size,
             field.value,

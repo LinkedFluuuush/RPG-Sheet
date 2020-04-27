@@ -3,7 +3,7 @@
 const $ = require("jquery");
 const components = require("../scripts/components");
 
-const handleComponentAdding = targetElement => {
+const handleComponentAdding = (targetElement) => {
   $(".pageContainer").css("cursor", "copy");
 
   let isDragging = false;
@@ -16,7 +16,7 @@ const handleComponentAdding = targetElement => {
   let eventTarget;
 
   $(".pageContainer")
-    .mousedown(function(event) {
+    .mousedown(function (event) {
       event.preventDefault();
       eventTarget = $(event.target);
       let parentOffset = eventTarget.offset();
@@ -28,13 +28,13 @@ const handleComponentAdding = targetElement => {
       previewRectangle.css("left", startCoord.x);
       $(event.target).append(previewRectangle);
 
-      $(event.target).mousemove(function(event) {
+      $(event.target).mousemove(function (event) {
         event.preventDefault();
 
         isDragging = true;
         let currentMousePosition = {
           x: event.pageX - parentOffset.left - 1,
-          y: event.pageY - parentOffset.top - 5
+          y: event.pageY - parentOffset.top - 5,
         };
 
         if (currentMousePosition.x < startCoord.x) {
@@ -66,7 +66,7 @@ const handleComponentAdding = targetElement => {
         }
       });
     })
-    .mouseup(function(event) {
+    .mouseup(function (event) {
       event.preventDefault();
       let parentOffset = eventTarget.offset();
       var wasDragging = isDragging;
@@ -77,7 +77,7 @@ const handleComponentAdding = targetElement => {
 
         let finalStartCoord = {
           x: startCoord.x < endCoord.x ? startCoord.x : endCoord.x,
-          y: startCoord.y < endCoord.y ? startCoord.y : endCoord.y
+          y: startCoord.y < endCoord.y ? startCoord.y : endCoord.y,
         };
 
         let finalSize = {
@@ -88,17 +88,14 @@ const handleComponentAdding = targetElement => {
           height:
             startCoord.y < endCoord.y
               ? endCoord.y - startCoord.y
-              : startCoord.y - endCoord.y
+              : startCoord.y - endCoord.y,
         };
 
         components.addComponent(
           targetElement,
-          eventTarget.attr("id"),
-          components.calculatePercentPosition(
-            eventTarget.attr("id"),
-            finalStartCoord
-          ),
-          components.calculatePercentSize(eventTarget.attr("id"), finalSize)
+          eventTarget,
+          components.calculatePercentPosition(eventTarget, finalStartCoord),
+          components.calculatePercentSize(eventTarget, finalSize)
         );
       }
       previewRectangle.remove();
@@ -107,5 +104,5 @@ const handleComponentAdding = targetElement => {
 };
 
 module.exports = {
-  handleComponentAdding
+  handleComponentAdding,
 };
