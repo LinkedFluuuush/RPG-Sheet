@@ -130,30 +130,45 @@ const createSheetData = (template = false) => {
   return sheetData;
 };
 
-const openSheet = () => {
-  dialog
-    .showOpenDialog({
-      filters: [
-        { name: "RPG Sheets", extensions: ["rpSheet"] },
-        { name: "All Files", extensions: ["*"] },
-      ],
-      properties: ["openFile"],
-    })
-    .then((fileData) => {
-      if (fileData.filePaths === [] || fileData.canceled) {
-        console.log("You didn't open any file");
-        return;
-      }
+const openSheet = (file = false) => {
+  if (file) {
+    if (fs.existsSync(file) && fs.lstatSync(file).isFile()) {
+      doOpen(file);
+    }
+  } else {
+    dialog
+      .showOpenDialog({
+        filters: [
+          { name: "RPG Sheets", extensions: ["rpSheet"] },
+          { name: "All Files", extensions: ["*"] },
+        ],
+        properties: ["openFile"],
+      })
+      .then((fileData) => {
+        if (fileData.filePaths === [] || fileData.canceled) {
+          console.log("You didn't open any file");
+          return;
+        }
 
-      savedFileName = fileData.filePaths[0];
-      mainScript.setWindowTitle(
-        savedFileName.substring(0, savedFileName.length - 8)
-      );
+        doOpen(fileData.filePaths[0]);
+      });
+  }
+};
 
-      let sheetData = JSON.parse(fs.readFileSync(savedFileName));
+const doOpen = (filePath) => {
+  savedFileName = filePath;
+  mainScript.setWindowTitle(
+    savedFileName.substring(0, savedFileName.length - 8)
+  );
 
-      generateFromData(sheetData);
-    });
+  let sheetData = JSON.parse(fs.readFileSync(savedFileName));
+
+  try {
+    generateFromData(sheetData);
+  } catch (e) {
+    console.error(e);
+    mainScript.initApp();
+  }
 };
 
 const generateFromData = (data = null) => {
@@ -177,7 +192,7 @@ const generateFromData = (data = null) => {
     }
   }
 
-  console.debug("Generated from " + JSON.stringify(data));
+  console.log("Generated from " + JSON.stringify(data));
 };
 
 const newSheet = () => {

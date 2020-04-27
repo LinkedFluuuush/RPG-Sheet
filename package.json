@@ -5,6 +5,7 @@
   "description": "My Electron application description",
   "main": "src/main.js",
   "scripts": {
+    "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
@@ -21,7 +22,7 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "rpgsheet_forge"
+            "name": "rpgsheet"
           }
         },
         {
@@ -43,6 +44,7 @@
     }
   },
   "dependencies": {
+    "electron-regedit": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "file-type": "^14.2.0",
     "jquery": "^3.5.0"

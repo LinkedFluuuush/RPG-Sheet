@@ -19,9 +19,9 @@ const createMenu = () => {
               { role: "hideothers" },
               { role: "unhide" },
               { type: "separator" },
-              { role: "quit" }
-            ]
-          }
+              { role: "quit" },
+            ],
+          },
         ]
       : []),
     // { role: 'fileMenu' }
@@ -32,19 +32,15 @@ const createMenu = () => {
           label: "New",
           accelerator: "CommandOrControl+N",
           click: (menuItem, window) => {
-            console.debug("Requested new sheet");
-            let code = `require('./scripts/fileManager.js').newSheet();`;
-            window.webContents.executeJavaScript(code);
-          }
+            newAction(window);
+          },
         },
         {
           label: "Open",
           accelerator: "CommandOrControl+O",
           click: (menuItem, window) => {
-            console.debug("Requested open sheet");
-            let code = `require('./scripts/fileManager.js').openSheet();`;
-            window.webContents.executeJavaScript(code);
-          }
+            openAction(window);
+          },
         },
         { role: "recentDocuments" },
         { role: "clearRecentDocuments" },
@@ -53,31 +49,25 @@ const createMenu = () => {
           label: "Save",
           accelerator: "CommandOrControl+S",
           click: (menuItem, window) => {
-            console.debug("Requested save sheet");
-            let code = `require('./scripts/fileManager.js').saveSheet();`;
-            window.webContents.executeJavaScript(code);
-          }
+            saveAction(window);
+          },
         },
         {
           label: "Save As",
           accelerator: "CommandOrControl+Shift+S",
           click: (menuItem, window) => {
-            console.debug("Requested save as sheet");
-            let code = `require('./scripts/fileManager.js').saveSheetAs();`;
-            window.webContents.executeJavaScript(code);
-          }
+            saveAsAction(window);
+          },
         },
         {
           label: "Save As Template",
           click: (menuItem, window) => {
-            console.debug("Requested save as template sheet");
-            let code = `require('./scripts/fileManager.js').saveSheetAsTemplate();`;
-            window.webContents.executeJavaScript(code);
-          }
+            saveAsTemplateAction(window);
+          },
         },
         { type: "separator" },
-        isMac ? { role: "close" } : { role: "quit" }
-      ]
+        isMac ? { role: "close" } : { role: "quit" },
+      ],
     },
     // { role: 'editMenu' }
     {
@@ -93,10 +83,10 @@ const createMenu = () => {
           ? [
               { role: "pasteAndMatchStyle" },
               { role: "delete" },
-              { role: "selectAll" }
+              { role: "selectAll" },
             ]
-          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }])
-      ]
+          : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
+      ],
     },
     // { role: 'windowMenu' }
     {
@@ -109,33 +99,24 @@ const createMenu = () => {
               { type: "separator" },
               { role: "front" },
               { type: "separator" },
-              { role: "window" }
+              { role: "window" },
             ]
-          : [])
-      ]
+          : []),
+      ],
     },
-    // { role: 'helpMenu' }
-    {
-      label: "Aide",
-      submenu: [
-        {
-          label: "A propos",
-          click: (menuItem, window) => {
-            let code = `alert('Icons made by Pixel perfect from www.flaticon.com');`;
-            window.webContents.executeJavaScript(code);
-          }
-        }
-      ]
-    },
-    // { role: 'devMenu' }
-    {
-      label: "Develop",
-      submenu: [
-        { role: "reload" },
-        { role: "forcereload" },
-        { role: "toggledevtools" }
-      ]
-    }
+    ...(app.isPackaged
+      ? []
+      : [
+          // { role: 'devMenu' }
+          {
+            label: "Develop",
+            submenu: [
+              { role: "reload" },
+              { role: "forcereload" },
+              { role: "toggledevtools" },
+            ],
+          },
+        ]),
   ];
 
   const menu = Menu.buildFromTemplate(template);
@@ -143,6 +124,40 @@ const createMenu = () => {
   Menu.setApplicationMenu(menu);
 };
 
+const saveAction = (window) => {
+  console.debug("Requested save sheet");
+  let code = `require('./scripts/fileManager.js').saveSheet();`;
+  window.webContents.executeJavaScript(code);
+};
+
+const saveAsAction = (window) => {
+  console.debug("Requested save as sheet");
+  let code = `require('./scripts/fileManager.js').saveSheetAs();`;
+  window.webContents.executeJavaScript(code);
+};
+
+const saveAsTemplateAction = (window) => {
+  console.debug("Requested save as template sheet");
+  let code = `require('./scripts/fileManager.js').saveSheetAsTemplate();`;
+  window.webContents.executeJavaScript(code);
+};
+
+const newAction = (window) => {
+  console.debug("Requested new sheet");
+  let code = `require('./scripts/fileManager.js').newSheet();`;
+  window.webContents.executeJavaScript(code);
+};
+
+const openAction = (window, file = false) => {
+  console.debug("Requested open sheet");
+  let code = "require('./scripts/fileManager.js').openSheet(";
+  if (file) {
+    code += `'${file}'`;
+  }
+  code += ");";
+  window.webContents.executeJavaScript(code);
+};
+
 module.exports = {
-  createMenu
+  createMenu,
 };
