@@ -106,7 +106,6 @@ const addComponent = (
     }
 
     additionalCSS = additionalCSSArray;
-    console.log(additionalCSS);
   }
 
   for (let cssProp of additionalCSS) {
