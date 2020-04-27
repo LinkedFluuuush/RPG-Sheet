@@ -1,14 +1,15 @@
 {
   "name": "rpgsheet",
-  "productName": "RPG Sheet",
+  "productName": "rpgsheet",
   "version": "0.1.0-alpha",
+  "titleName": "RPG Sheet",
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
     "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make",
+    "make": "electron-forge make --arch=ia32,x64",
     "publish": "electron-forge publish",
     "lint": "eslint src"
   },
@@ -33,12 +34,22 @@
           ]
         },
         {
+          "name": "@electron-forge/maker-pkg",
+          "config": {
+            "name": "rpgsheet"
+          }
+        },
+        {
           "name": "@electron-forge/maker-deb",
-          "config": {}
+          "config": {
+            "name": "rpgsheet"
+          }
         },
         {
           "name": "@electron-forge/maker-rpm",
-          "config": {}
+          "config": {
+            "name": "rpgsheet"
+          }
         }
       ]
     }
@@ -55,6 +66,7 @@
     "@electron-forge/maker-rpm": "^6.0.0-beta.50",
     "@electron-forge/maker-squirrel": "^6.0.0-beta.50",
     "@electron-forge/maker-zip": "^6.0.0-beta.50",
+    "@electron-forge/maker-pkg": "^6.0.0-beta.51",
     "electron": "8.2.3",
     "eslint": "^6.8.0"
   }

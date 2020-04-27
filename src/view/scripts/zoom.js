@@ -3,11 +3,6 @@
 const $ = require("jquery");
 const remote = require("electron").remote;
 
-let hotKey = event.ctrlKey;
-if (remote.process.platform === "darwin") {
-  hotKey = event.metaKey;
-}
-
 const zoomIn = () => {
   $(".pageContainer .pageImgHolder").width(
     $(".pageContainer .pageImgHolder").width() + 50
@@ -58,6 +53,11 @@ const updateInputFontSize = () => {
 };
 
 const zoomDefaultHandler = (event) => {
+  let hotKey = event.ctrlKey;
+  if (remote.process.platform === "darwin") {
+    hotKey = event.metaKey;
+  }
+
   if (hotKey == true && event.key == "0") {
     event.preventDefault();
     zoomToHeight();
@@ -77,6 +77,11 @@ const zoomDefaultHandler = (event) => {
 };
 
 const zoomHandler = (event) => {
+  let hotKey = event.ctrlKey;
+  if (remote.process.platform === "darwin") {
+    hotKey = event.metaKey;
+  }
+
   if (hotKey == true) {
     event.preventDefault();
     if (event.originalEvent.deltaY > 0) {
