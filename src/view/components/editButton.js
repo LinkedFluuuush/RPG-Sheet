@@ -2,8 +2,10 @@
 
 const $ = require("jquery");
 let constants = require("../../constants");
+let components = require("../scripts/components");
 
 const selfId = constants.TOOLS.EDIT;
+let openedOptionsDiv;
 
 const getElement = () => {
   let elt = $("<button></button>");
@@ -24,24 +26,23 @@ const activate = () => {
   $(".pageContainer input,textarea").css("cursor", "default");
   $(".pageContainer input,textarea").css("outline", "red 2px solid");
 
-  $(".pageContainer input,textarea").mousedown(event => {
+  $(".pageContainer input,textarea").mousedown((event) => {
     event.preventDefault();
   });
 
-  let openedOptionsDiv;
-  $(".pageContainer input,textarea").click(event => {
-    event.preventDefault();
-    if (openedOptionsDiv) {
-      openedOptionsDiv.remove();
-      $(".pageContainer input,textarea").css("outline", "red 2px solid");
-    }
+  $(".pageContainer input,textarea").click(clickFunction);
+};
 
-    $(event.target).css("outline", "blue 2px solid");
-    openedOptionsDiv = createOptionsDiv(event.target);
-    $(event.target)
-      .parent()
-      .append(openedOptionsDiv);
-  });
+const clickFunction = (event) => {
+  event.preventDefault();
+  if (openedOptionsDiv) {
+    openedOptionsDiv.remove();
+    $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  }
+
+  $(event.target).css("outline", "blue 2px solid");
+  openedOptionsDiv = createOptionsDiv(event.target);
+  $(event.target).parent().append(openedOptionsDiv);
 };
 
 const deactivate = () => {
@@ -56,7 +57,7 @@ const deactivate = () => {
   $(".optionsDiv").remove();
 };
 
-const createOptionsDiv = target => {
+const createOptionsDiv = (target) => {
   let optionsDiv = $("<div>");
   optionsDiv.prop("class", "optionsDiv");
   optionsDiv.css("top", $(target).position().top + $(target).height() + 30);
@@ -145,12 +146,12 @@ const createOptionsDiv = target => {
   cssText.change(() => {
     let newCSSLines = cssText.val().split("\n");
 
-    let newCSSProps = newCSSLines.map(elt => {
+    let newCSSProps = newCSSLines.map((elt) => {
       let eltClean = elt.endsWith(";") ? elt.substring(0, elt.length - 1) : elt;
 
       return {
         prop: eltClean.split(": ", 2)[0],
-        value: eltClean.split(": ", 2)[1]
+        value: eltClean.split(": ", 2)[1],
       };
     });
 
@@ -173,6 +174,77 @@ const createOptionsDiv = target => {
   cssDiv.append("<div>Custom CSS</div>");
   cssDiv.append(cssText);
 
+  let fieldTypeDiv = $("<div>");
+  let fieldTypeSelect = $("<select>");
+
+  let currentFieldType =
+    $(target).prop("tagName").toLowerCase() === "textarea"
+      ? constants.TOOLS.TEXTAREA
+      : $(target).prop("type") === "checkbox"
+      ? constants.TOOLS.CHECKBOX
+      : constants.TOOLS.TEXTINPUT;
+
+  fieldTypeSelect.append(
+    "<option value='" +
+      constants.TOOLS.TEXTINPUT +
+      "' " +
+      (currentFieldType == constants.TOOLS.TEXTINPUT
+        ? "selected='selected'"
+        : "") +
+      ">" +
+      constants.TOOLS.TEXTINPUT +
+      "</option>"
+  );
+  fieldTypeSelect.append(
+    "<option value='" +
+      constants.TOOLS.TEXTAREA +
+      "' " +
+      (currentFieldType == constants.TOOLS.TEXTAREA
+        ? "selected='selected'"
+        : "") +
+      ">" +
+      constants.TOOLS.TEXTAREA +
+      "</option>"
+  );
+  fieldTypeSelect.append(
+    "<option value='" +
+      constants.TOOLS.CHECKBOX +
+      "' " +
+      (currentFieldType == constants.TOOLS.CHECKBOX
+        ? "selected='selected'"
+        : "") +
+      ">" +
+      constants.TOOLS.CHECKBOX +
+      "</option>"
+  );
+
+  fieldTypeSelect.change(() => {
+    components.addComponent(
+      fieldTypeSelect.val(),
+      $(target).parent().prop("id"),
+      {
+        x: target.style.left.substring(0, target.style.left.length - 1),
+        y: target.style.top.substring(0, target.style.top.length - 1),
+      },
+      {
+        width: target.style.width.substring(0, target.style.width.length - 1),
+        height: target.style.height.substring(
+          0,
+          target.style.height.length - 1
+        ),
+      },
+      $(target).val(),
+      $(target).prop("tabindex"),
+      cssString
+    );
+
+    $(target).remove();
+    deactivate();
+    activate();
+  });
+
+  fieldTypeDiv.append(fieldTypeSelect);
+
   let buttonsDiv = $("<div>");
   let deleteButton = $("<button>");
   deleteButton.text("Delete");
@@ -193,6 +265,7 @@ const createOptionsDiv = target => {
   optionsDiv.append(sizeDiv);
   optionsDiv.append(orderDiv);
   optionsDiv.append(cssDiv);
+  optionsDiv.append(fieldTypeDiv);
   optionsDiv.append(buttonsDiv);
 
   return optionsDiv;
@@ -201,5 +274,5 @@ const createOptionsDiv = target => {
 module.exports = {
   getElement,
   activate,
-  deactivate
+  deactivate,
 };

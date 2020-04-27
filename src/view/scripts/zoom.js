@@ -1,6 +1,12 @@
 "use strict";
 
 const $ = require("jquery");
+const remote = require("electron").remote;
+
+let hotKey = event.ctrlKey;
+if (remote.process.platform === "darwin") {
+  hotKey = event.metaKey;
+}
 
 const zoomIn = () => {
   $(".pageContainer .pageImgHolder").width(
@@ -28,7 +34,7 @@ const zoomToHeight = () => {
   if ($(".pageContainer .pageImgHolder").length > 0) {
     let naturalSizes = {
       width: $(".pageContainer .pageImgHolder")[0].originalWidth,
-      height: $(".pageContainer .pageImgHolder")[0].originalHeight
+      height: $(".pageContainer .pageImgHolder")[0].originalHeight,
     };
 
     let newWidth =
@@ -46,32 +52,32 @@ const zoomToHeight = () => {
 };
 
 const updateInputFontSize = () => {
-  $("input").css("font-size", idx => {
+  $("input").css("font-size", (idx) => {
     return $($("input")[idx]).height() * 0.9;
   });
 };
 
-const zoomDefaultHandler = event => {
-  if (event.ctrlKey == true && event.key == "0") {
+const zoomDefaultHandler = (event) => {
+  if (hotKey == true && event.key == "0") {
     event.preventDefault();
     zoomToHeight();
     updateInputFontSize();
   }
-  if (event.ctrlKey == true && event.key == "1") {
+  if (hotKey == true && event.key == "1") {
     event.preventDefault();
     zoomToNatural();
     updateInputFontSize();
   }
 
-  if (event.ctrlKey == true && event.key == "2") {
+  if (hotKey == true && event.key == "2") {
     event.preventDefault();
     zoomToWidth();
     updateInputFontSize();
   }
 };
 
-const zoomHandler = event => {
-  if (event.ctrlKey == true) {
+const zoomHandler = (event) => {
+  if (hotKey == true) {
     event.preventDefault();
     if (event.originalEvent.deltaY > 0) {
       zoomOut();
@@ -95,5 +101,5 @@ const initZoomControls = () => {
 };
 
 module.exports = {
-  initZoomControls
+  initZoomControls,
 };

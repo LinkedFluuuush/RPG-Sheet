@@ -1,15 +1,16 @@
 {
-  "name": "rpgsheet-forge",
-  "productName": "rpgsheet-forge",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "name": "rpgsheet",
+  "productName": "RPG Sheet",
+  "version": "0.1.0-alpha",
+  "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
+    "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make",
     "publish": "electron-forge publish",
-    "lint": "echo \"No linting configured\""
+    "lint": "eslint src"
   },
   "keywords": [],
   "author": "linked",
@@ -21,11 +22,8 @@
         {
           "name": "@electron-forge/maker-squirrel",
           "config": {
-            "name": "rpgsheet_forge"
-          },
-          "platforms": [
-            "linux"
-          ]
+            "name": "rpgsheet"
+          }
         },
         {
           "name": "@electron-forge/maker-zip",
@@ -46,6 +44,7 @@
     }
   },
   "dependencies": {
+    "electron-regedit": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "file-type": "^14.2.0",
     "jquery": "^3.5.0"

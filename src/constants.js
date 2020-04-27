@@ -6,7 +6,8 @@ const constants = {
     EDIT: "edit",
     TEXTINPUT: "textInput",
     TEXTAREA: "textArea",
-    CHECKBOX: "checkbox"
+    CHECKBOX: "checkbox",
+    REORGANIZE: "reorganize",
   },
   UNEDITABLE_CSS: [
     "top",
@@ -18,8 +19,8 @@ const constants = {
     "outline-color",
     "outline-style",
     "outline-width",
-    "font-size"
-  ]
+    "font-size",
+  ],
 };
 
 module.exports = constants;

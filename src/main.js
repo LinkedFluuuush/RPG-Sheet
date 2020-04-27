@@ -1,5 +1,12 @@
 "use strict";
 
+const { handleSquirrelEvent } = require("./handleSquirrelInstall");
+
+if (handleSquirrelEvent()) {
+  // squirrel event handled and app will exit in 1000ms, so don't do anything else
+  return;
+}
+
 const { app, BrowserWindow } = require("electron");
 let win;
 const isMac = process.platform === "darwin";
@@ -13,17 +20,14 @@ function createWindow() {
     height: 600,
     webPreferences: {
       nodeIntegration: true,
-      plugins: true
-    }
+      plugins: true,
+    },
   });
 
   createMenu();
 
   // et charger le fichier index.html de l'application.
   win.loadFile("./src/view/index.html");
-
-  // Ouvre les DevTools.
-  win = null;
 }
 
 // Cette méthode sera appelée quant Electron aura fini

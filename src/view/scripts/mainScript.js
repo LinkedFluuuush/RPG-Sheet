@@ -5,13 +5,18 @@ const pageManager = require("./pages");
 
 const $ = require("jquery");
 
-const initApp = () => {
+const initApp = (fileName = false) => {
   toolbar.generateToolBar();
   generateWelcomeScreen();
+
+  if (fileName) {
+    const fileManager = require("./fileManager");
+    fileManager.openSheet(fileName);
+  }
 };
 
 const setWindowTitle = (title = "untitled") => {
-  const name = require("../../../package.json").name;
+  const name = require("../../../package.json").productName;
   const version = require("../../../package.json").version;
   $("title").text(title + " - " + name + " - version " + version);
 };
@@ -28,10 +33,7 @@ const generateWelcomeScreen = () => {
   addSheetDiv.append("<img src='./img/addSheet.svg'></img>");
   addSheetDiv.append("Nouvelle page");
   addSheetDiv.click(() => {
-    $("#mainContent").empty();
-    pageManager.createNewPage().catch(() => {
-      initApp();
-    });
+    pageManager.createNewPage();
   });
 
   let openSheetDiv = $("<div>");
@@ -48,5 +50,5 @@ const generateWelcomeScreen = () => {
 
 module.exports = {
   initApp,
-  setWindowTitle
+  setWindowTitle,
 };

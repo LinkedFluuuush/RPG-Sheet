@@ -8,7 +8,7 @@ const calculatePercentPosition = (pageId, position) => {
 
   return {
     x: Math.round((position.x / page.width()) * 10000) / 100,
-    y: Math.round((position.y / page.height()) * 10000) / 100
+    y: Math.round((position.y / page.height()) * 10000) / 100,
   };
 };
 
@@ -17,7 +17,7 @@ const calculatePercentSize = (pageId, size) => {
 
   return {
     width: Math.round((size.width / page.width()) * 10000) / 100,
-    height: Math.round((size.height / page.height()) * 10000) / 100
+    height: Math.round((size.height / page.height()) * 10000) / 100,
   };
 };
 
@@ -81,6 +81,33 @@ const addComponent = (
 
   newElement.prop("tabindex", order);
 
+  if (typeof additionalCSS === "string") {
+    let cssLines = additionalCSS.split("\n");
+
+    let additionalCSSArray = [];
+    for (let cssElt of cssLines) {
+      if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
+        let newCSSElt = {
+          prop: cssElt.split(": ", 2)[0],
+          value: cssElt.split(": ", 2)[1],
+        };
+
+        if (newCSSElt.value && newCSSElt.value.endsWith(";")) {
+          newCSSElt.value = newCSSElt.value.substring(
+            0,
+            newCSSElt.value.length - 1
+          );
+        }
+
+        if (newCSSElt.prop) {
+          additionalCSSArray.push(newCSSElt);
+        }
+      }
+    }
+
+    additionalCSS = additionalCSSArray;
+  }
+
   for (let cssProp of additionalCSS) {
     if (!constants.UNEDITABLE_CSS.includes(cssProp.prop)) {
       newElement.css(cssProp.prop, cssProp.value);
@@ -99,5 +126,5 @@ const addComponent = (
 module.exports = {
   addComponent,
   calculatePercentPosition,
-  calculatePercentSize
+  calculatePercentSize,
 };

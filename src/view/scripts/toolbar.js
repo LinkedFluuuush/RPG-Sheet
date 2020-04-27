@@ -4,8 +4,8 @@ const settings = require("./settings");
 let constants = require("../../constants");
 const $ = require("jquery");
 
-const setTool = tool => {
-  console.log("Setting " + tool + " instead of " + settings.currentTool);
+const setTool = (tool) => {
+  console.debug("Setting " + tool + " instead of " + settings.currentTool);
   if (settings.currentTool) {
     let previousToolClass = require("../components/" +
       settings.currentTool +
@@ -37,5 +37,5 @@ const generateToolBar = () => {
 
 module.exports = {
   setTool,
-  generateToolBar
+  generateToolBar,
 };
