@@ -1,6 +1,7 @@
 "use strict";
 
 const toolbar = require("./toolbar");
+const pageManager = require("./pages");
 
 const $ = require("jquery");
 
@@ -26,7 +27,9 @@ const generateWelcomeScreen = () => {
   addSheetDiv.addClass("welcomeScreenDiv");
   addSheetDiv.append("<img src='./img/addSheet.svg'></img>");
   addSheetDiv.append("Nouvelle page");
-  addSheetDiv.click(require("../components/addPageButton").activate);
+  addSheetDiv.click(() => {
+    pageManager.createNewPage();
+  });
 
   let openSheetDiv = $("<div>");
   openSheetDiv.addClass("welcomeScreenDiv");

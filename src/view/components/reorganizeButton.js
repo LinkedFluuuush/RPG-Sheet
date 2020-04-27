@@ -3,6 +3,7 @@
 const $ = require("jquery");
 let constants = require("../../constants");
 let toolBar = require("../scripts/toolbar");
+let pageManager = require("../scripts/pages");
 
 const selfId = constants.TOOLS.REORGANIZE;
 
@@ -59,6 +60,7 @@ const activate = () => {
 };
 
 const generatePreviewPages = (parentDiv) => {
+  parentDiv.empty();
   $(".pageContainer").each((idx, elt) => {
     let pagePreview = $("<div>");
     pagePreview.css("display", "flex");
@@ -71,6 +73,16 @@ const generatePreviewPages = (parentDiv) => {
     pageImg.prop("src", $(elt).find("img").prop("src"));
     pageImg.css("height", "90%");
     pageImg.css("width", "auto");
+    pageImg.mouseover(() => {
+      pageImg.css("opacity", "0.5");
+    });
+    pageImg.mouseout(() => {
+      pageImg.css("opacity", "1");
+    });
+
+    pageImg.click(() => {
+      pageManager.changePageBackground($(elt));
+    });
 
     let buttonDiv = $("<div>");
     buttonDiv.css("display", "flex");
@@ -83,7 +95,6 @@ const generatePreviewPages = (parentDiv) => {
       if (previousPage.length > 0) {
         $(elt).remove();
         previousPage.before(elt);
-        parentDiv.empty();
         generatePreviewPages(parentDiv);
       }
     });
@@ -94,7 +105,6 @@ const generatePreviewPages = (parentDiv) => {
 
     buttonDelete.click(() => {
       $(elt).remove();
-      parentDiv.empty();
       generatePreviewPages(parentDiv);
     });
 
@@ -106,7 +116,6 @@ const generatePreviewPages = (parentDiv) => {
       if (nextPage.length > 0) {
         $(elt).remove();
         nextPage.after(elt);
-        parentDiv.empty();
         generatePreviewPages(parentDiv);
       }
     });
@@ -120,6 +129,38 @@ const generatePreviewPages = (parentDiv) => {
 
     parentDiv.append(pagePreview);
   });
+
+  let newPageDiv = $("<div>");
+  newPageDiv.css("display", "flex");
+  newPageDiv.css("flex-direction", "column");
+  newPageDiv.css("margin", "10px");
+  newPageDiv.css("border", "black 1px solid");
+  newPageDiv.css("height", "90%");
+
+  let pageImg = $("<img>");
+  pageImg.prop("src", "./img/addSheet.svg");
+  pageImg.css("height", "fit-content");
+  pageImg.css("margin", "auto");
+  pageImg.css("padding", "10%");
+  pageImg.css("width", "fit-content");
+  pageImg.mouseover(() => {
+    pageImg.css("opacity", "0.5");
+  });
+  pageImg.mouseout(() => {
+    pageImg.css("opacity", "1");
+  });
+
+  pageImg.click(() => {
+    pageManager
+      .createNewPage()
+      .then(() => {
+        generatePreviewPages(parentDiv);
+      })
+      .catch(() => {});
+  });
+
+  newPageDiv.append(pageImg);
+  parentDiv.append(newPageDiv);
 };
 
 const deactivate = () => {

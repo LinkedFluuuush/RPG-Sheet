@@ -10,21 +10,44 @@ const createNewPage = async () => {
   return dialog
     .showOpenDialog({
       filters: [
-        { name: "Images", extensions: ["jpg", "jpeg", "png", "gif", "bmp"] }
+        { name: "Images", extensions: ["jpg", "jpeg", "png", "gif", "bmp"] },
       ],
-      properties: ["openFile"]
+      properties: ["openFile"],
     })
-    .then(fileData => {
+    .then((fileData) => {
       if (fileData.filePaths === [] || fileData.canceled) {
         throw new Error("You didn't open any file");
       }
 
-      addPage(fileData.filePaths[0]);
+      return addPage(fileData.filePaths[0]).then((page) => {
+        $(".welcomeScreenDiv").remove();
+        return page;
+      });
     });
 };
 
-const addPage = async image => {
-  return new Promise(resolve => {
+const changePageBackground = (page) => {
+  dialog
+    .showOpenDialog({
+      filters: [
+        { name: "Images", extensions: ["jpg", "jpeg", "png", "gif", "bmp"] },
+      ],
+      properties: ["openFile"],
+    })
+    .then((fileData) => {
+      if (fileData.filePaths !== [] && !fileData.canceled) {
+        console.log("Changing page to " + fileData.filePaths[0]);
+        setPageImage(
+          page,
+          fileData.filePaths[0],
+          page.find("img").css("width")
+        );
+      }
+    });
+};
+
+const addPage = async (image) => {
+  return new Promise((resolve) => {
     let newPage = $("<div>");
     newPage.addClass("pageContainer");
     newPage.prop("id", "page_" + ($(".pageContainer").length + 1));
@@ -38,7 +61,7 @@ const addPage = async image => {
   });
 };
 
-const setPageImage = async (page, image) => {
+const setPageImage = async (page, image, imageWidth = null) => {
   let backgroundImg = "";
   if (image.startsWith("data:")) {
     backgroundImg = image.replace(/(\r\n|\n|\r)/gm, "");
@@ -61,6 +84,10 @@ const setPageImage = async (page, image) => {
   pageHolder.addClass("pageImgHolder");
   pageHolder.prop("src", backgroundImg);
 
+  if (imageWidth) {
+    pageHolder.css("width", imageWidth);
+  }
+
   let originalSize = await getImageDimensions(backgroundImg);
   pageHolder.prop("originalWidth", originalSize.w);
   pageHolder.prop("originalHeight", originalSize.h);
@@ -69,9 +96,9 @@ const setPageImage = async (page, image) => {
 };
 
 function getImageDimensions(base64) {
-  return new Promise(function(resolved) {
+  return new Promise(function (resolved) {
     var i = new Image();
-    i.onload = function() {
+    i.onload = function () {
       resolved({ w: i.width, h: i.height });
     };
     i.src = base64;
@@ -81,5 +108,6 @@ function getImageDimensions(base64) {
 module.exports = {
   addPage,
   setPageImage,
-  createNewPage
+  createNewPage,
+  changePageBackground,
 };
