@@ -1,8 +1,8 @@
 {
   "name": "rpgsheet",
   "productName": "RPG Sheet",
-  "version": "1.0.0",
-  "description": "My Electron application description",
+  "version": "0.1.0-alpha",
+  "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
     "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
