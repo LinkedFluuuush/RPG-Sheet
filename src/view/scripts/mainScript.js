@@ -5,9 +5,14 @@ const pageManager = require("./pages");
 
 const $ = require("jquery");
 
-const initApp = () => {
+const initApp = (fileName = false) => {
   toolbar.generateToolBar();
   generateWelcomeScreen();
+
+  if (fileName) {
+    const fileManager = require("./fileManager");
+    fileManager.openSheet(fileName);
+  }
 };
 
 const setWindowTitle = (title = "untitled") => {

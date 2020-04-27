@@ -36,7 +36,7 @@ const changePageBackground = (page) => {
     })
     .then((fileData) => {
       if (fileData.filePaths !== [] && !fileData.canceled) {
-        console.log("Changing page to " + fileData.filePaths[0]);
+        console.debug("Changing page to " + fileData.filePaths[0]);
         setPageImage(
           page,
           fileData.filePaths[0],
