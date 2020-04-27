@@ -32,10 +32,10 @@ const handleSaveFile = (fileName = null, template = false) => {
       .showSaveDialog({
         filters: [
           { name: "RPG Sheets", extensions: ["rpSheet"] },
-          { name: "All Files", extensions: ["*"] }
-        ]
+          { name: "All Files", extensions: ["*"] },
+        ],
       })
-      .then(fileData => {
+      .then((fileData) => {
         doSaveData(fileData, sheetData, template);
       });
   } else {
@@ -60,7 +60,7 @@ const doSaveData = (fileData, data) => {
   );
 
   // fileName is a string that contains the path and filename created in the save file dialog.
-  fs.writeFile(savedFileName, JSON.stringify(data), err => {
+  fs.writeFile(savedFileName, JSON.stringify(data), (err) => {
     if (err) {
       alert("An error ocurred creating the file " + err.message);
     }
@@ -71,14 +71,14 @@ const doSaveData = (fileData, data) => {
 
 const createSheetData = (template = false) => {
   const sheetData = {
-    pages: []
+    pages: [],
   };
 
   $(".pageContainer").each((idx, elt) => {
     let fullBGUrl = $(elt).css("background-image");
     let pageData = {
       background: fullBGUrl.substring(5, fullBGUrl.length - 2),
-      fields: []
+      fields: [],
     };
 
     $(elt)
@@ -97,7 +97,7 @@ const createSheetData = (template = false) => {
           if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
             additionalCSS.push({
               prop: cssElt,
-              value: template ? "" : elt.style[cssElt]
+              value: template ? "" : elt.style[cssElt],
             });
           }
         }
@@ -105,21 +105,21 @@ const createSheetData = (template = false) => {
         let fieldData = {
           position: {
             x: elt.style.left.replace("%", ""),
-            y: elt.style.top.replace("%", "")
+            y: elt.style.top.replace("%", ""),
           },
           size: {
             width: elt.style.width.replace("%", ""),
-            height: elt.style.height.replace("%", "")
+            height: elt.style.height.replace("%", ""),
           },
           value: fieldValue,
           type:
-            $(elt).prop("tagName") === "textarea"
+            $(elt).prop("tagName").toLowerCase() === "textarea"
               ? constants.TOOLS.TEXTAREA
               : $(elt).prop("type") === "checkbox"
               ? constants.TOOLS.CHECKBOX
               : constants.TOOLS.TEXTINPUT,
           order: $(elt).prop("tabindex") ? $(elt).prop("tabindex") : 0,
-          additionalCSS: additionalCSS
+          additionalCSS: additionalCSS,
         };
 
         pageData.fields.push(fieldData);
@@ -135,11 +135,11 @@ const openSheet = () => {
     .showOpenDialog({
       filters: [
         { name: "RPG Sheets", extensions: ["rpSheet"] },
-        { name: "All Files", extensions: ["*"] }
+        { name: "All Files", extensions: ["*"] },
       ],
-      properties: ["openFile"]
+      properties: ["openFile"],
     })
-    .then(fileData => {
+    .then((fileData) => {
       if (fileData.filePaths === [] || fileData.canceled) {
         console.log("You didn't open any file");
         return;
@@ -161,7 +161,7 @@ const generateFromData = (data = null) => {
 
   if (data) {
     for (let page of data.pages) {
-      pageManager.addPage(page.background).then(pageElement => {
+      pageManager.addPage(page.background).then((pageElement) => {
         for (let field of page.fields) {
           components.addComponent(
             field.type,
@@ -190,5 +190,5 @@ module.exports = {
   saveSheetAs,
   saveSheetAsTemplate,
   openSheet,
-  newSheet
+  newSheet,
 };
