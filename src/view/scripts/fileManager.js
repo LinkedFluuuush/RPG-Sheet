@@ -25,6 +25,7 @@ const saveSheetAsTemplate = () => {
 };
 
 const handleSaveFile = (fileName = null, template = false) => {
+  toolbar.setTool(constants.TOOLS.POINTER);
   const sheetData = createSheetData(template);
   console.debug(sheetData);
 
