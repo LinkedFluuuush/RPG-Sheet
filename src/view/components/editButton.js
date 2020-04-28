@@ -3,6 +3,7 @@
 const $ = require("jquery");
 let constants = require("../../constants");
 let components = require("../scripts/components");
+let helper = require("./helper");
 
 const selfId = constants.TOOLS.EDIT;
 let openedOptionsDiv;
@@ -257,6 +258,17 @@ const createOptionsDiv = (target, topWindow = false) => {
   fieldTypeDiv.append(fieldTypeSelect);
 
   let buttonsDiv = $("<div>");
+
+  let copyButton = $("<button>");
+  copyButton.text("Copy");
+  copyButton.click(() => {
+    helper.handleComponentCopying(target, () => {
+      deactivate();
+      activate();
+    });
+    optionsDiv.remove();
+  });
+
   let deleteButton = $("<button>");
   deleteButton.text("Delete");
   deleteButton.click(() => {
@@ -269,6 +281,8 @@ const createOptionsDiv = (target, topWindow = false) => {
   saveButton.click(() => {
     optionsDiv.remove();
   });
+
+  buttonsDiv.append(copyButton);
   buttonsDiv.append(deleteButton);
   buttonsDiv.append(saveButton);
 

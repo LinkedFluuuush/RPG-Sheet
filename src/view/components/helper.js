@@ -2,6 +2,7 @@
 
 const $ = require("jquery");
 const components = require("../scripts/components");
+const constants = require("../../constants");
 
 const handleComponentAdding = (targetElement) => {
   $(".pageContainer").css("cursor", "copy");
@@ -103,6 +104,75 @@ const handleComponentAdding = (targetElement) => {
     });
 };
 
+const handleComponentCopying = (component, callback = null) => {
+  $(".pageContainer").css("cursor", "copy");
+
+  let size = {
+    width: $(component).width(),
+    height: $(component).height(),
+  };
+  let previewRectangle = $("<div>");
+  previewRectangle.css("border", "black 1px solid");
+  previewRectangle.css("background-color", "rgba(255,255,255,0.5)");
+  previewRectangle.css("position", "absolute");
+  previewRectangle.css("width", size.width);
+  previewRectangle.css("height", size.height);
+  previewRectangle.css("pointer-events", "none");
+  $("body").append(previewRectangle);
+
+  let targetElement =
+    $(component).prop("tagName").toLowerCase() === "textarea"
+      ? constants.TOOLS.TEXTAREA
+      : $(component).prop("type") === "checkbox"
+      ? constants.TOOLS.CHECKBOX
+      : constants.TOOLS.TEXTINPUT;
+
+  const doCopy = (event) => {
+    event.preventDefault();
+
+    let parentOffset = $(event.target).offset();
+    let coord = {
+      x: event.pageX - parentOffset.left - 1,
+      y: event.pageY - parentOffset.top - 5,
+    };
+
+    let additionalCSS = components.getAdditionalCSS(component);
+
+    components.addComponent(
+      targetElement,
+      $(event.target),
+      components.calculatePercentPosition($(event.target), coord),
+      components.calculatePercentSize($(event.target), size),
+      false,
+      0,
+      additionalCSS
+    );
+
+    previewRectangle.remove();
+    $(".pageContainer").off("mousemove", updatePreviewRectangle);
+    $(".pageContainer").off("mouseup", doCopy);
+    $(".pageContainer").css("cursor", "");
+
+    if (callback) {
+      callback();
+    }
+  };
+
+  const updatePreviewRectangle = (event) => {
+    let currentMousePosition = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+
+    previewRectangle.css("top", currentMousePosition.y);
+    previewRectangle.css("left", currentMousePosition.x);
+  };
+
+  $(".pageContainer").on("mouseup", doCopy);
+  $(".pageContainer").on("mousemove", updatePreviewRectangle);
+};
+
 module.exports = {
   handleComponentAdding,
+  handleComponentCopying,
 };

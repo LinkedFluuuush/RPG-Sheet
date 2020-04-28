@@ -93,15 +93,7 @@ const createSheetData = (template = false) => {
           fieldValue = $(elt).val();
         }
 
-        let additionalCSS = [];
-        for (let cssElt of elt.style) {
-          if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
-            additionalCSS.push({
-              prop: cssElt,
-              value: template ? "" : elt.style[cssElt],
-            });
-          }
-        }
+        let additionalCSS = components.getAdditionalCSS(elt);
 
         let fieldData = {
           position: {
@@ -112,7 +104,7 @@ const createSheetData = (template = false) => {
             width: elt.style.width.replace("%", ""),
             height: elt.style.height.replace("%", ""),
           },
-          value: fieldValue,
+          value: template ? "" : fieldValue,
           type:
             $(elt).prop("tagName").toLowerCase() === "textarea"
               ? constants.TOOLS.TEXTAREA
