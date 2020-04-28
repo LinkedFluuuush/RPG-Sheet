@@ -47,6 +47,7 @@ const clickFunction = (event) => {
   }
   initKeyboardShortcuts(event.target);
   $("body").append(createOptionsDiv(event.target, placeOnTop));
+  createOrderDiv(event.target);
 };
 
 const deactivate = () => {
@@ -64,6 +65,7 @@ const deactivate = () => {
 const closeOptionsDiv = () => {
   $(window).off("keydown", keyBoardShortcutsEvent);
   $(".optionsDiv").remove();
+  $("#orderCorner").remove();
 };
 
 const deleteTarget = (target) => {
@@ -129,6 +131,14 @@ const updatePosition = (target) => {
   $(target).css("top", $("#vPosition").val() / 100 + "%");
   $(target).css("width", $("#hSize").val() / 100 + "%");
   $(target).css("height", $("#vSize").val() / 100 + "%");
+
+  let topRightCornerPosition = {
+    x: (Number($("#hPosition").val()) + Number($("#hSize").val())) / 100,
+    y: $("#vPosition").val() / 100,
+  };
+
+  $("#orderCorner").css("top", topRightCornerPosition.y + "%");
+  $("#orderCorner").css("left", topRightCornerPosition.x + "%");
 };
 
 const updateOrder = (target) => {
@@ -218,7 +228,10 @@ const keyBoardShortcutsEvent = (event) => {
     }
   };
 
-  if (!$(".optionsDiv").has(target).length) {
+  if (
+    !$(".optionsDiv").has(event.target).length &&
+    $(event.target).prop("id") !== "cornerOrderInput"
+  ) {
     switch (event.code) {
       case "Delete":
         deleteTarget(target);
@@ -340,6 +353,7 @@ const createOptionsDiv = (target, topWindow = false) => {
     orderInput.prop("id", "order");
     orderInput.val($(target).prop("tabindex"));
     orderInput.change(() => {
+      $("#cornerOrderInput").val(orderInput.val());
       updateOrder(target);
     });
 
@@ -446,6 +460,49 @@ const createOptionsDiv = (target, topWindow = false) => {
   optionsDiv.append(getButtonsDiv());
 
   return optionsDiv;
+};
+
+const createOrderDiv = (target) => {
+  let orderDiv = $("<div>");
+  let orderHide = $("<span>");
+  orderHide.css("display", "none");
+  orderHide.css("white-space", "pre");
+
+  let orderInput = $("<input>");
+  orderInput.prop("id", "cornerOrderInput");
+  orderInput.prop("type", "text");
+
+  orderInput.css("border", "none");
+  orderInput.css("min-width", "10px");
+
+  orderInput.val($(target).prop("tabindex"));
+  orderInput.on("input", () => {
+    orderInput.val(orderInput.val().replace(/[^0-9]/, ""));
+    orderHide.text(orderInput.val());
+    orderInput.width(orderHide.width());
+
+    $("#order").val(orderInput.val());
+    updateOrder(target);
+  });
+
+  orderDiv.append(orderHide);
+  orderDiv.append(orderInput);
+
+  orderDiv.css("position", "absolute");
+  orderDiv.css("transform", "translate(-50%, -50%)");
+  orderDiv.css("border", "1px solid black");
+  orderDiv.css("background", "white");
+  orderDiv.css("padding", "2px");
+
+  orderDiv.prop("id", "orderCorner");
+  $(event.target).parent().append(orderDiv);
+  updatePosition(event.target);
+
+  orderHide.text(orderInput.val());
+  orderInput.width(orderHide.width());
+  orderInput.focus();
+
+  return orderDiv;
 };
 
 module.exports = {
