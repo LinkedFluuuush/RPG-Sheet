@@ -3,7 +3,7 @@
 const $ = require("jquery");
 const components = require("../scripts/components");
 
-const handleComponentAdding = targetElement => {
+const handleComponentAdding = (targetElement) => {
   $(".pageContainer").css("cursor", "copy");
 
   let isDragging = false;
@@ -16,7 +16,7 @@ const handleComponentAdding = targetElement => {
   let eventTarget;
 
   $(".pageContainer")
-    .mousedown(function(event) {
+    .mousedown(function (event) {
       event.preventDefault();
       eventTarget = $(event.target);
       let parentOffset = eventTarget.offset();
@@ -28,13 +28,13 @@ const handleComponentAdding = targetElement => {
       previewRectangle.css("left", startCoord.x);
       $(event.target).append(previewRectangle);
 
-      $(event.target).mousemove(function(event) {
+      $(event.target).mousemove(function (event) {
         event.preventDefault();
 
         isDragging = true;
         let currentMousePosition = {
           x: event.pageX - parentOffset.left - 1,
-          y: event.pageY - parentOffset.top - 5
+          y: event.pageY - parentOffset.top - 5,
         };
 
         if (currentMousePosition.x < startCoord.x) {
@@ -66,7 +66,7 @@ const handleComponentAdding = targetElement => {
         }
       });
     })
-    .mouseup(function(event) {
+    .mouseup(function (event) {
       event.preventDefault();
       let parentOffset = eventTarget.offset();
       var wasDragging = isDragging;
@@ -77,7 +77,7 @@ const handleComponentAdding = targetElement => {
 
         let finalStartCoord = {
           x: startCoord.x < endCoord.x ? startCoord.x : endCoord.x,
-          y: startCoord.y < endCoord.y ? startCoord.y : endCoord.y
+          y: startCoord.y < endCoord.y ? startCoord.y : endCoord.y,
         };
 
         let finalSize = {
@@ -88,17 +88,14 @@ const handleComponentAdding = targetElement => {
           height:
             startCoord.y < endCoord.y
               ? endCoord.y - startCoord.y
-              : startCoord.y - endCoord.y
+              : startCoord.y - endCoord.y,
         };
 
         components.addComponent(
           targetElement,
-          eventTarget.attr("id"),
-          components.calculatePercentPosition(
-            eventTarget.attr("id"),
-            finalStartCoord
-          ),
-          components.calculatePercentSize(eventTarget.attr("id"), finalSize)
+          eventTarget,
+          components.calculatePercentPosition(eventTarget, finalStartCoord),
+          components.calculatePercentSize(eventTarget, finalSize)
         );
       }
       previewRectangle.remove();
@@ -106,6 +103,159 @@ const handleComponentAdding = targetElement => {
     });
 };
 
+const handleComponentCopying = (component, callback = null) => {
+  $(".pageContainer").css("cursor", "copy");
+
+  let size = {
+    width: $(component).width(),
+    height: $(component).height(),
+  };
+  let previewRectangle = $("<div>");
+  previewRectangle.css("border", "black 1px solid");
+  previewRectangle.css("background-color", "rgba(255,255,255,0.5)");
+  previewRectangle.css("position", "absolute");
+  previewRectangle.css("width", size.width);
+  previewRectangle.css("height", size.height);
+  previewRectangle.css("pointer-events", "none");
+  $("body").append(previewRectangle);
+
+  let targetElement = components.getType(component);
+
+  const doCopy = (event) => {
+    event.preventDefault();
+
+    let parentOffset = $(event.target).offset();
+    let coord = {
+      x: event.pageX - parentOffset.left - 1,
+      y: event.pageY - parentOffset.top - 5,
+    };
+
+    let additionalCSS = components.getAdditionalCSS(component);
+
+    components.addComponent(
+      targetElement,
+      $(event.target),
+      components.calculatePercentPosition($(event.target), coord),
+      components.calculatePercentSize($(event.target), size),
+      false,
+      0,
+      additionalCSS
+    );
+
+    endCopying(true);
+  };
+
+  const endCopyingKeyEvent = (event) => {
+    if (event.code === "Escape") {
+      event.preventDefault();
+      endCopying();
+    }
+  };
+  const endCopying = (copyDone = false) => {
+    previewRectangle.remove();
+    $(".pageContainer").off("mousemove", updatePreviewRectangle);
+    $(".pageContainer").off("mouseup", doCopy);
+    $(".pageContainer").css("cursor", "");
+
+    $(document).off("keydown", endCopyingKeyEvent);
+
+    if (copyDone && callback) {
+      callback();
+    }
+  };
+
+  const updatePreviewRectangle = (event) => {
+    let currentMousePosition = {
+      x: event.pageX,
+      y: event.pageY,
+    };
+
+    previewRectangle.css("top", currentMousePosition.y);
+    previewRectangle.css("left", currentMousePosition.x);
+  };
+
+  $(".pageContainer").on("mouseup", doCopy);
+  $(".pageContainer").on("mousemove", updatePreviewRectangle);
+  $(document).on("keydown", endCopyingKeyEvent);
+};
+
+const handleComponentAlignment = (component, direction, callback = null) => {
+  let targetPosition;
+
+  switch (direction.toLowerCase()) {
+    case "left":
+      targetPosition = component.style.left.replace("%", "");
+      break;
+    case "right":
+      targetPosition =
+        Number(component.style.left.replace("%", "")) +
+        Number(component.style.width.replace("%", ""));
+      break;
+    case "top":
+      targetPosition = component.style.top.replace("%", "");
+      break;
+    case "bottom":
+      targetPosition =
+        Number(component.style.top.replace("%", "")) +
+        Number(component.style.height.replace("%", ""));
+      break;
+  }
+
+  const doAlign = (event) => {
+    event.preventDefault();
+
+    if (!$(event.target).hasClass("pageContainer")) {
+      let target = event.target;
+
+      switch (direction.toLowerCase()) {
+        case "left":
+          $(target).css("left", targetPosition + "%");
+          break;
+        case "right":
+          $(target).css(
+            "left",
+            targetPosition - Number(target.style.width.replace("%", "")) + "%"
+          );
+          break;
+        case "top":
+          $(target).css("top", targetPosition + "%");
+          break;
+        case "bottom":
+          $(target).css(
+            "top",
+            targetPosition - Number(target.style.height.replace("%", "")) + "%"
+          );
+          break;
+      }
+    }
+  };
+
+  $(component).parent().find("input,textarea").on("click", doAlign);
+
+  let doneButton = $("<button>");
+  doneButton.text("Done");
+
+  doneButton.css("position", "absolute");
+  doneButton.css("left", "50%");
+  doneButton.css("bottom", "5%");
+  doneButton.css("transform", "translate(-50%, 0)");
+  doneButton.addClass("optionsElement");
+
+  doneButton.click(() => {
+    $(".pageContainer input,textarea").off("mouseup", doAlign);
+    doneButton.remove();
+
+    if (callback) {
+      callback();
+    }
+  });
+
+  $("body").append(doneButton);
+  $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  $(component).css("outline", "green 2px solid");
+};
 module.exports = {
-  handleComponentAdding
+  handleComponentAdding,
+  handleComponentCopying,
+  handleComponentAlignment,
 };

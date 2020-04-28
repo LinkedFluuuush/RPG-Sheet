@@ -2,6 +2,7 @@ body {
   margin: 0;
   background-color: lightgray;
   height: 100%;
+  font-family: sans-serif;
 }
 
 #menuBar {
@@ -59,8 +60,45 @@ textarea {
   width: 500px;
 }
 
-.pageContainer .optionsDiv {
+.optionsDiv {
   position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
   background-color: white;
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px 10px 0px 10px;
+}
+
+.optionsDiv > div {
+  margin-bottom: 10px;
+}
+
+.optionsDiv button {
+  margin-left: 10px;
+}
+
+.popInMsg {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: none;
+  font-size: 20;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.successMsg {
+  background-color: #def0d8;
+  border: #007e33 2px solid;
+  color: #003a17;
+}
+
+.errorMsg {
+  background-color: #f2dedf;
+  border: #cc0000 2px solid;
+  color: #cc0000;
 }

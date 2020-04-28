@@ -3,11 +3,13 @@
 const $ = require("jquery");
 const { dialog } = require("electron").remote;
 const fs = require("fs");
+const utils = require("./utils");
 
 let constants = require("../../constants");
 let mainScript = require("./mainScript");
 let pageManager = require("./pages");
 let components = require("./components");
+let toolbar = require("./toolbar");
 
 let savedFileName = null;
 
@@ -24,6 +26,7 @@ const saveSheetAsTemplate = () => {
 };
 
 const handleSaveFile = (fileName = null, template = false) => {
+  toolbar.setTool(constants.TOOLS.POINTER);
   const sheetData = createSheetData(template);
   console.debug(sheetData);
 
@@ -62,10 +65,13 @@ const doSaveData = (fileData, data) => {
   // fileName is a string that contains the path and filename created in the save file dialog.
   fs.writeFile(savedFileName, JSON.stringify(data), (err) => {
     if (err) {
-      alert("An error ocurred creating the file " + err.message);
+      utils.displayPopInMsg(
+        "An error ocurred creating the file " + err.message,
+        "error"
+      );
+    } else {
+      utils.displayPopInMsg("The file has been succesfully saved", "success");
     }
-
-    alert("The file has been succesfully saved");
   });
 };
 
@@ -92,15 +98,7 @@ const createSheetData = (template = false) => {
           fieldValue = $(elt).val();
         }
 
-        let additionalCSS = [];
-        for (let cssElt of elt.style) {
-          if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
-            additionalCSS.push({
-              prop: cssElt,
-              value: template ? "" : elt.style[cssElt],
-            });
-          }
-        }
+        let additionalCSS = components.getAdditionalCSS(elt);
 
         let fieldData = {
           position: {
@@ -111,13 +109,8 @@ const createSheetData = (template = false) => {
             width: elt.style.width.replace("%", ""),
             height: elt.style.height.replace("%", ""),
           },
-          value: fieldValue,
-          type:
-            $(elt).prop("tagName").toLowerCase() === "textarea"
-              ? constants.TOOLS.TEXTAREA
-              : $(elt).prop("type") === "checkbox"
-              ? constants.TOOLS.CHECKBOX
-              : constants.TOOLS.TEXTINPUT,
+          value: template ? "" : fieldValue,
+          type: components.getType(elt),
           order: $(elt).prop("tabindex") ? $(elt).prop("tabindex") : 0,
           additionalCSS: additionalCSS,
         };
@@ -180,7 +173,7 @@ const generateFromData = (data = null) => {
         for (let field of page.fields) {
           components.addComponent(
             field.type,
-            $(pageElement).prop("id"),
+            pageElement,
             field.position,
             field.size,
             field.value,
@@ -193,6 +186,8 @@ const generateFromData = (data = null) => {
   }
 
   console.log("Generated from " + JSON.stringify(data));
+
+  toolbar.setTool(constants.TOOLS.POINTER);
 };
 
 const newSheet = () => {

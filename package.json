@@ -1,7 +1,7 @@
 {
   "name": "rpgsheet",
   "productName": "rpgsheet",
-  "version": "0.1.0-alpha",
+  "version": "0.2.0-alpha",
   "titleName": "RPG Sheet",
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
@@ -9,7 +9,7 @@
     "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make --arch=ia32,x64",
+    "make": "electron-forge make --arch=all",
     "publish": "electron-forge publish",
     "lint": "eslint src"
   },

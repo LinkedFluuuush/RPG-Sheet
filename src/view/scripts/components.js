@@ -3,27 +3,23 @@
 const $ = require("jquery");
 const constants = require("../../constants");
 
-const calculatePercentPosition = (pageId, position) => {
-  let page = $("#" + pageId);
-
+const calculatePercentPosition = (page, position) => {
   return {
-    x: Math.round((position.x / page.width()) * 10000) / 100,
-    y: Math.round((position.y / page.height()) * 10000) / 100,
+    x: Math.round((position.x / $(page).width()) * 10000) / 100,
+    y: Math.round((position.y / $(page).height()) * 10000) / 100,
   };
 };
 
-const calculatePercentSize = (pageId, size) => {
-  let page = $("#" + pageId);
-
+const calculatePercentSize = (page, size) => {
   return {
-    width: Math.round((size.width / page.width()) * 10000) / 100,
-    height: Math.round((size.height / page.height()) * 10000) / 100,
+    width: Math.round((size.width / $(page).width()) * 10000) / 100,
+    height: Math.round((size.height / $(page).height()) * 10000) / 100,
   };
 };
 
 const addComponent = (
   type,
-  pageId,
+  page,
   position,
   size,
   value = false,
@@ -36,7 +32,7 @@ const addComponent = (
     "Trying to place " +
       type +
       " at page " +
-      pageId +
+      page +
       " - " +
       JSON.stringify(position) +
       " - size " +
@@ -114,7 +110,7 @@ const addComponent = (
     }
   }
 
-  $("#" + pageId).append(newElement);
+  $(page).append(newElement);
 
   if (type === constants.TOOLS.TEXTINPUT) {
     newElement.css("font-size", newElement.height() * 0.9);
@@ -123,8 +119,32 @@ const addComponent = (
   return newElement;
 };
 
+const getAdditionalCSS = (elt) => {
+  let additionalCSS = [];
+  for (let cssElt of elt.style) {
+    if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
+      additionalCSS.push({
+        prop: cssElt,
+        value: elt.style[cssElt],
+      });
+    }
+  }
+
+  return additionalCSS;
+};
+
+const getType = (elt) => {
+  return $(elt).prop("tagName").toLowerCase() === "textarea"
+    ? constants.TOOLS.TEXTAREA
+    : $(elt).prop("type") === "checkbox"
+    ? constants.TOOLS.CHECKBOX
+    : constants.TOOLS.TEXTINPUT;
+};
+
 module.exports = {
   addComponent,
   calculatePercentPosition,
   calculatePercentSize,
+  getAdditionalCSS,
+  getType,
 };
