@@ -34,12 +34,6 @@
           ]
         },
         {
-          "name": "@electron-forge/maker-pkg",
-          "config": {
-            "name": "rpgsheet"
-          }
-        },
-        {
           "name": "@electron-forge/maker-deb",
           "config": {
             "name": "rpgsheet"
