@@ -41,8 +41,13 @@ const clickFunction = (event) => {
   }
 
   $(event.target).css("outline", "blue 2px solid");
-  openedOptionsDiv = createOptionsDiv(event.target);
-  $(event.target).parent().append(openedOptionsDiv);
+
+  let placeOnTop = false;
+  if (event.screenY > window.innerHeight / 2) {
+    placeOnTop = true;
+  }
+  openedOptionsDiv = createOptionsDiv(event.target, placeOnTop);
+  $("body").append(openedOptionsDiv);
 };
 
 const deactivate = () => {
@@ -57,11 +62,17 @@ const deactivate = () => {
   $(".optionsDiv").remove();
 };
 
-const createOptionsDiv = (target) => {
+const createOptionsDiv = (target, topWindow = false) => {
   let optionsDiv = $("<div>");
   optionsDiv.prop("class", "optionsDiv");
-  optionsDiv.css("top", $(target).position().top + $(target).height() + 30);
-  optionsDiv.css("left", $(target).position().left);
+
+  if (topWindow) {
+    optionsDiv.css("top", "5%");
+    optionsDiv.css("bottom", "");
+  } else {
+    optionsDiv.css("top", "");
+    optionsDiv.css("bottom", "5%");
+  }
 
   let hPositionInput = $("<input>");
   hPositionInput.prop("type", "number");

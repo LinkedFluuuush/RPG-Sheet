@@ -8,6 +8,7 @@ let constants = require("../../constants");
 let mainScript = require("./mainScript");
 let pageManager = require("./pages");
 let components = require("./components");
+let toolbar = require("./toolbar");
 
 let savedFileName = null;
 
@@ -193,6 +194,8 @@ const generateFromData = (data = null) => {
   }
 
   console.log("Generated from " + JSON.stringify(data));
+
+  toolbar.setTool(constants.TOOLS.POINTER);
 };
 
 const newSheet = () => {
