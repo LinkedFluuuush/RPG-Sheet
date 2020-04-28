@@ -81,6 +81,15 @@ const copyTarget = (target) => {
   closeOptionsDiv();
 };
 
+const alignToTarget = (target, direction) => {
+  $(".pageContainer input,textarea").off("click", clickFunction);
+  helper.handleComponentAlignment(target, direction, () => {
+    deactivate();
+    activate();
+  });
+  closeOptionsDiv();
+};
+
 const saveTarget = (target) => {
   updatePosition(target);
   updateOrder(target);
@@ -452,11 +461,47 @@ const createOptionsDiv = (target, topWindow = false) => {
     return buttonsDiv;
   };
 
+  const getAlignmentDiv = () => {
+    let buttonsDiv = $("<div>");
+
+    let leftButton = $("<button>");
+    leftButton.text("Align others to left");
+    leftButton.click(() => {
+      alignToTarget(target, "left");
+    });
+
+    let rightButton = $("<button>");
+    rightButton.text("Align others to right");
+    rightButton.click(() => {
+      alignToTarget(target, "right");
+    });
+
+    let topButton = $("<button>");
+    topButton.text("Align others to top");
+    topButton.click(() => {
+      alignToTarget(target, "top");
+    });
+
+    let bottomButton = $("<button>");
+    bottomButton.text("Align others to bottom");
+    bottomButton.click(() => {
+      alignToTarget(target, "bottom");
+    });
+
+    buttonsDiv.append(leftButton);
+    buttonsDiv.append(rightButton);
+    buttonsDiv.append(topButton);
+    buttonsDiv.append(bottomButton);
+
+    return buttonsDiv;
+  };
+
+  optionsDiv.append(getFieldTypeDiv());
   optionsDiv.append(getPositionDiv());
   optionsDiv.append(getSizeDiv());
   optionsDiv.append(getOrderDiv());
+  optionsDiv.append(getAlignmentDiv());
   optionsDiv.append(getCSSDiv());
-  optionsDiv.append(getFieldTypeDiv());
   optionsDiv.append(getButtonsDiv());
 
   return optionsDiv;

@@ -69,4 +69,13 @@ textarea {
   display: flex;
   flex-direction: column;
   text-align: center;
+  padding: 10px 10px 0px 10px;
+}
+
+.optionsDiv > div {
+  margin-bottom: 10px;
+}
+
+.optionsDiv button {
+  margin-left: 10px;
 }

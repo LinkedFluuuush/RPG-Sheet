@@ -179,7 +179,82 @@ const handleComponentCopying = (component, callback = null) => {
   $(document).on("keydown", endCopyingKeyEvent);
 };
 
+const handleComponentAlignment = (component, direction, callback = null) => {
+  let targetPosition;
+
+  switch (direction.toLowerCase()) {
+    case "left":
+      targetPosition = component.style.left.replace("%", "");
+      break;
+    case "right":
+      targetPosition =
+        Number(component.style.left.replace("%", "")) +
+        Number(component.style.width.replace("%", ""));
+      break;
+    case "top":
+      targetPosition = component.style.top.replace("%", "");
+      break;
+    case "bottom":
+      targetPosition =
+        Number(component.style.top.replace("%", "")) +
+        Number(component.style.height.replace("%", ""));
+      break;
+  }
+
+  const doAlign = (event) => {
+    event.preventDefault();
+
+    if (!$(event.target).hasClass("pageContainer")) {
+      let target = event.target;
+
+      switch (direction.toLowerCase()) {
+        case "left":
+          $(target).css("left", targetPosition + "%");
+          break;
+        case "right":
+          $(target).css(
+            "left",
+            targetPosition - Number(target.style.width.replace("%", "")) + "%"
+          );
+          break;
+        case "top":
+          $(target).css("top", targetPosition + "%");
+          break;
+        case "bottom":
+          $(target).css(
+            "top",
+            targetPosition - Number(target.style.height.replace("%", "")) + "%"
+          );
+          break;
+      }
+    }
+  };
+
+  $(".pageContainer input").on("click", doAlign);
+
+  let doneButton = $("<button>");
+  doneButton.text("Done");
+
+  doneButton.css("position", "absolute");
+  doneButton.css("left", "50%");
+  doneButton.css("bottom", "5%");
+  doneButton.css("transform", "translate(-50%, 0)");
+
+  doneButton.click(() => {
+    $(".pageContainer input").off("mouseup", doAlign);
+    doneButton.remove();
+
+    if (callback) {
+      callback();
+    }
+  });
+
+  $("body").append(doneButton);
+  $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  $(component).css("outline", "green 2px solid");
+};
 module.exports = {
   handleComponentAdding,
   handleComponentCopying,
+  handleComponentAlignment,
 };
