@@ -105,12 +105,7 @@ const createSheetData = (template = false) => {
             height: elt.style.height.replace("%", ""),
           },
           value: template ? "" : fieldValue,
-          type:
-            $(elt).prop("tagName").toLowerCase() === "textarea"
-              ? constants.TOOLS.TEXTAREA
-              : $(elt).prop("type") === "checkbox"
-              ? constants.TOOLS.CHECKBOX
-              : constants.TOOLS.TEXTINPUT,
+          type: components.getType(elt),
           order: $(elt).prop("tabindex") ? $(elt).prop("tabindex") : 0,
           additionalCSS: additionalCSS,
         };

@@ -4,9 +4,9 @@ const $ = require("jquery");
 let constants = require("../../constants");
 let components = require("../scripts/components");
 let helper = require("./helper");
+const remote = require("electron").remote;
 
 const selfId = constants.TOOLS.EDIT;
-let openedOptionsDiv;
 
 const getElement = () => {
   let elt = $("<button></button>");
@@ -36,10 +36,8 @@ const activate = () => {
 
 const clickFunction = (event) => {
   event.preventDefault();
-  if (openedOptionsDiv) {
-    openedOptionsDiv.remove();
-    $(".pageContainer input,textarea").css("outline", "red 2px solid");
-  }
+  closeOptionsDiv();
+  $(".pageContainer input,textarea").css("outline", "red 2px solid");
 
   $(event.target).css("outline", "blue 2px solid");
 
@@ -47,8 +45,8 @@ const clickFunction = (event) => {
   if (event.screenY > window.innerHeight / 2) {
     placeOnTop = true;
   }
-  openedOptionsDiv = createOptionsDiv(event.target, placeOnTop);
-  $("body").append(openedOptionsDiv);
+  initKeyboardShortcuts(event.target);
+  $("body").append(createOptionsDiv(event.target, placeOnTop));
 };
 
 const deactivate = () => {
@@ -60,7 +58,200 @@ const deactivate = () => {
   $(".pageContainer input,textarea").off("mousedown");
   $(".pageContainer input,textarea").off("click");
 
+  closeOptionsDiv();
+};
+
+const closeOptionsDiv = () => {
+  $(window).off("keydown", keyBoardShortcutsEvent);
   $(".optionsDiv").remove();
+};
+
+const deleteTarget = (target) => {
+  $(target).remove();
+  closeOptionsDiv();
+};
+
+const copyTarget = (target) => {
+  helper.handleComponentCopying(target, () => {
+    deactivate();
+    activate();
+  });
+  closeOptionsDiv();
+};
+
+const saveTarget = (target) => {
+  updatePosition(target);
+  updateOrder(target);
+  updateCSS(target);
+  closeOptionsDiv(target);
+};
+
+const moveTarget = (target, direction, step = 5) => {
+  switch (direction.toLowerCase()) {
+    case "up":
+      $("#vPosition").val(Number($("#vPosition").val()) - step);
+      break;
+    case "down":
+      $("#vPosition").val(Number($("#vPosition").val()) + step);
+      break;
+    case "left":
+      $("#hPosition").val(Number($("#hPosition").val()) - step);
+      break;
+    case "right":
+      $("#hPosition").val(Number($("#hPosition").val()) + step);
+      break;
+  }
+
+  updatePosition(target);
+};
+
+const resizeTarget = (target, direction, step = 5) => {
+  switch (direction.toLowerCase()) {
+    case "up":
+      $("#vSize").val(Number($("#vSize").val()) - step);
+      break;
+    case "down":
+      $("#vSize").val(Number($("#vSize").val()) + step);
+      break;
+    case "left":
+      $("#hSize").val(Number($("#hSize").val()) - step);
+      break;
+    case "right":
+      $("#hSize").val(Number($("#hSize").val()) + step);
+      break;
+  }
+
+  updatePosition(target);
+};
+
+const updatePosition = (target) => {
+  $(target).css("left", $("#hPosition").val() / 100 + "%");
+  $(target).css("top", $("#vPosition").val() / 100 + "%");
+  $(target).css("width", $("#hSize").val() / 100 + "%");
+  $(target).css("height", $("#vSize").val() / 100 + "%");
+};
+
+const updateOrder = (target) => {
+  $(target).prop("tabindex", $("#order").val());
+};
+
+const updateCSS = (target) => {
+  let newCSSLines = $("#cssText").val().split("\n");
+
+  let newCSSProps = newCSSLines.map((elt) => {
+    let eltClean = elt.endsWith(";") ? elt.substring(0, elt.length - 1) : elt;
+
+    return {
+      prop: eltClean.split(": ", 2)[0],
+      value: eltClean.split(": ", 2)[1],
+    };
+  });
+
+  let previousCSSFields = [];
+
+  for (let cssElt of target.style) {
+    if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
+      previousCSSFields.push(cssElt);
+    }
+  }
+
+  for (let oldProp of previousCSSFields) {
+    $(target).css(oldProp, "");
+  }
+
+  for (let newProp of newCSSProps) {
+    if (
+      newProp.prop &&
+      newProp.value &&
+      !constants.UNEDITABLE_CSS.includes(newProp.prop)
+    ) {
+      console.debug("setting " + newProp.prop + " to " + newProp.value);
+      $(target).css(newProp.prop, newProp.value);
+    }
+  }
+};
+
+const changeComponentType = (target) => {
+  let additionalCSS = components.getAdditionalCSS(target);
+
+  components.addComponent(
+    $("#fieldTypeSelect").val(),
+    $(target).parent(),
+    {
+      x: target.style.left.substring(0, target.style.left.length - 1),
+      y: target.style.top.substring(0, target.style.top.length - 1),
+    },
+    {
+      width: target.style.width.substring(0, target.style.width.length - 1),
+      height: target.style.height.substring(0, target.style.height.length - 1),
+    },
+    $(target).val(),
+    $(target).prop("tabindex"),
+    additionalCSS
+  );
+
+  deleteTarget();
+  deactivate();
+  activate();
+};
+
+const keyBoardShortcutsEvent = (event) => {
+  let hotkey =
+    remote.process.platform === "darwin" ? event.metaKey : event.ctrlKey;
+  let target = event.data;
+
+  const handleDirectionEvent = (target, event, direction) => {
+    event.preventDefault();
+    let step = 5;
+    if (hotkey) {
+      step = 20;
+    }
+
+    if (event.altKey) {
+      step = 1;
+    }
+
+    if (event.shiftKey) {
+      resizeTarget(target, direction, step);
+    } else {
+      moveTarget(target, direction, step);
+    }
+  };
+
+  if (!$(".optionsDiv").has(target).length) {
+    switch (event.code) {
+      case "Delete":
+        deleteTarget(target);
+        break;
+      case "KeyC":
+        if (hotkey) {
+          copyTarget(target);
+        }
+        break;
+      case "ArrowLeft":
+        handleDirectionEvent(target, event, "left");
+        break;
+      case "ArrowRight":
+        handleDirectionEvent(target, event, "right");
+        break;
+      case "ArrowUp":
+        handleDirectionEvent(target, event, "up");
+        break;
+      case "ArrowDown":
+        handleDirectionEvent(target, event, "down");
+        break;
+    }
+  }
+
+  switch (event.code) {
+    case "Escape":
+      saveTarget(target);
+      break;
+  }
+};
+
+const initKeyboardShortcuts = (target) => {
+  $(window).on("keydown", target, keyBoardShortcutsEvent);
 };
 
 const createOptionsDiv = (target, topWindow = false) => {
@@ -75,223 +266,184 @@ const createOptionsDiv = (target, topWindow = false) => {
     optionsDiv.css("bottom", "5%");
   }
 
-  let hPositionInput = $("<input>");
-  hPositionInput.prop("type", "number");
-  hPositionInput.val(
-    Number(target.style.left.substring(0, target.style.left.length - 1)) * 100
-  );
-  hPositionInput.change(() => {
-    $(target).css("left", hPositionInput.val() / 100 + "%");
-  });
+  const getPositionDiv = () => {
+    let hPositionInput = $("<input>");
+    hPositionInput.prop("type", "number");
+    hPositionInput.prop("id", "hPosition");
 
-  let vPositionInput = $("<input>");
-  vPositionInput.prop("type", "number");
-  vPositionInput.val(
-    Number(target.style.top.substring(0, target.style.top.length - 1)) * 100
-  );
-  vPositionInput.change(() => {
-    $(target).css("top", vPositionInput.val() / 100 + "%");
-  });
-
-  let positionDiv = $("<div>");
-
-  positionDiv.append("Position : h : ");
-  positionDiv.append(hPositionInput);
-  positionDiv.append(" / v : ");
-  positionDiv.append(vPositionInput);
-
-  let hSizeInput = $("<input>");
-  hSizeInput.prop("type", "number");
-  hSizeInput.val(
-    Number(target.style.width.substring(0, target.style.width.length - 1)) * 100
-  );
-  hSizeInput.change(() => {
-    $(target).css("width", hSizeInput.val() / 100 + "%");
-  });
-
-  let vSizeInput = $("<input>");
-  vSizeInput.prop("type", "number");
-  vSizeInput.val(
-    Number(target.style.height.substring(0, target.style.height.length - 1)) *
-      100
-  );
-  vSizeInput.change(() => {
-    $(target).css("height", vSizeInput.val() / 100 + "%");
-  });
-
-  let sizeDiv = $("<div>");
-
-  sizeDiv.append("Size : h : ");
-  sizeDiv.append(hSizeInput);
-  sizeDiv.append(" / v : ");
-  sizeDiv.append(vSizeInput);
-
-  let orderInput = $("<input>");
-  orderInput.prop("type", "number");
-  orderInput.val($(target).prop("tabindex"));
-  orderInput.change(() => {
-    $(target).prop("tabindex", orderInput.val());
-  });
-
-  let orderDiv = $("<div>");
-
-  orderDiv.append("Field order in sheet : ");
-  orderDiv.append(orderInput);
-
-  let cssDiv = $("<div>");
-
-  let cssString = "";
-  let previousCSSFields = [];
-
-  for (let cssElt of target.style) {
-    if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
-      cssString += cssElt + ": " + target.style[cssElt] + ";\n";
-      previousCSSFields.push(cssElt);
-    }
-  }
-
-  let cssText = $("<textarea>");
-  cssText.text(cssString);
-  cssText.css("resize", "auto");
-  cssText.css("width", "100%");
-  cssText.css("height", "10em");
-  cssText.change(() => {
-    let newCSSLines = cssText.val().split("\n");
-
-    let newCSSProps = newCSSLines.map((elt) => {
-      let eltClean = elt.endsWith(";") ? elt.substring(0, elt.length - 1) : elt;
-
-      return {
-        prop: eltClean.split(": ", 2)[0],
-        value: eltClean.split(": ", 2)[1],
-      };
-    });
-
-    for (let oldProp of previousCSSFields) {
-      $(target).css(oldProp, "");
-    }
-
-    for (let newProp of newCSSProps) {
-      if (
-        newProp.prop &&
-        newProp.value &&
-        !constants.UNEDITABLE_CSS.includes(newProp.prop)
-      ) {
-        console.debug("setting " + newProp.prop + " to " + newProp.value);
-        $(target).css(newProp.prop, newProp.value);
-      }
-    }
-  });
-
-  cssDiv.append("<div>Custom CSS</div>");
-  cssDiv.append(cssText);
-
-  let fieldTypeDiv = $("<div>");
-  let fieldTypeSelect = $("<select>");
-
-  let currentFieldType =
-    $(target).prop("tagName").toLowerCase() === "textarea"
-      ? constants.TOOLS.TEXTAREA
-      : $(target).prop("type") === "checkbox"
-      ? constants.TOOLS.CHECKBOX
-      : constants.TOOLS.TEXTINPUT;
-
-  fieldTypeSelect.append(
-    "<option value='" +
-      constants.TOOLS.TEXTINPUT +
-      "' " +
-      (currentFieldType == constants.TOOLS.TEXTINPUT
-        ? "selected='selected'"
-        : "") +
-      ">" +
-      constants.TOOLS.TEXTINPUT +
-      "</option>"
-  );
-  fieldTypeSelect.append(
-    "<option value='" +
-      constants.TOOLS.TEXTAREA +
-      "' " +
-      (currentFieldType == constants.TOOLS.TEXTAREA
-        ? "selected='selected'"
-        : "") +
-      ">" +
-      constants.TOOLS.TEXTAREA +
-      "</option>"
-  );
-  fieldTypeSelect.append(
-    "<option value='" +
-      constants.TOOLS.CHECKBOX +
-      "' " +
-      (currentFieldType == constants.TOOLS.CHECKBOX
-        ? "selected='selected'"
-        : "") +
-      ">" +
-      constants.TOOLS.CHECKBOX +
-      "</option>"
-  );
-
-  fieldTypeSelect.change(() => {
-    components.addComponent(
-      fieldTypeSelect.val(),
-      $(target).parent(),
-      {
-        x: target.style.left.substring(0, target.style.left.length - 1),
-        y: target.style.top.substring(0, target.style.top.length - 1),
-      },
-      {
-        width: target.style.width.substring(0, target.style.width.length - 1),
-        height: target.style.height.substring(
-          0,
-          target.style.height.length - 1
-        ),
-      },
-      $(target).val(),
-      $(target).prop("tabindex"),
-      cssString
+    hPositionInput.val(
+      Number(target.style.left.substring(0, target.style.left.length - 1)) * 100
     );
-
-    $(target).remove();
-    deactivate();
-    activate();
-  });
-
-  fieldTypeDiv.append(fieldTypeSelect);
-
-  let buttonsDiv = $("<div>");
-
-  let copyButton = $("<button>");
-  copyButton.text("Copy");
-  copyButton.click(() => {
-    helper.handleComponentCopying(target, () => {
-      deactivate();
-      activate();
+    hPositionInput.change(() => {
+      updatePosition(target);
     });
-    optionsDiv.remove();
-  });
 
-  let deleteButton = $("<button>");
-  deleteButton.text("Delete");
-  deleteButton.click(() => {
-    $(target).remove();
-    optionsDiv.remove();
-  });
+    let vPositionInput = $("<input>");
+    vPositionInput.prop("type", "number");
+    vPositionInput.prop("id", "vPosition");
 
-  let saveButton = $("<button>");
-  saveButton.text("Save");
-  saveButton.click(() => {
-    optionsDiv.remove();
-  });
+    vPositionInput.val(
+      Number(target.style.top.substring(0, target.style.top.length - 1)) * 100
+    );
+    vPositionInput.change(() => {
+      updatePosition(target);
+    });
 
-  buttonsDiv.append(copyButton);
-  buttonsDiv.append(deleteButton);
-  buttonsDiv.append(saveButton);
+    let positionDiv = $("<div>");
 
-  optionsDiv.append(positionDiv);
-  optionsDiv.append(sizeDiv);
-  optionsDiv.append(orderDiv);
-  optionsDiv.append(cssDiv);
-  optionsDiv.append(fieldTypeDiv);
-  optionsDiv.append(buttonsDiv);
+    positionDiv.append("Position : h : ");
+    positionDiv.append(hPositionInput);
+    positionDiv.append(" / v : ");
+    positionDiv.append(vPositionInput);
+
+    return positionDiv;
+  };
+
+  const getSizeDiv = () => {
+    let hSizeInput = $("<input>");
+    hSizeInput.prop("type", "number");
+    hSizeInput.prop("id", "hSize");
+
+    hSizeInput.val(
+      Number(target.style.width.substring(0, target.style.width.length - 1)) *
+        100
+    );
+    hSizeInput.change(() => {
+      updatePosition(target);
+    });
+
+    let vSizeInput = $("<input>");
+    vSizeInput.prop("type", "number");
+    vSizeInput.prop("id", "vSize");
+
+    vSizeInput.val(
+      Number(target.style.height.substring(0, target.style.height.length - 1)) *
+        100
+    );
+    vSizeInput.change(() => {
+      updatePosition(target);
+    });
+
+    let sizeDiv = $("<div>");
+
+    sizeDiv.append("Size : h : ");
+    sizeDiv.append(hSizeInput);
+    sizeDiv.append(" / v : ");
+    sizeDiv.append(vSizeInput);
+
+    return sizeDiv;
+  };
+
+  const getOrderDiv = () => {
+    let orderInput = $("<input>");
+    orderInput.prop("type", "number");
+    orderInput.prop("id", "order");
+    orderInput.val($(target).prop("tabindex"));
+    orderInput.change(() => {
+      updateOrder(target);
+    });
+
+    let orderDiv = $("<div>");
+
+    orderDiv.append("Field order in sheet : ");
+    orderDiv.append(orderInput);
+
+    return orderDiv;
+  };
+
+  const getCSSDiv = () => {
+    let cssDiv = $("<div>");
+
+    let additionalCSS = components.getAdditionalCSS(target);
+    let cssString = "";
+
+    additionalCSS.forEach((elt) => {
+      cssString += elt.prop + ": " + elt.value + ";\n";
+    });
+
+    let cssText = $("<textarea>");
+    cssText.prop("id", "cssText");
+    cssText.text(cssString);
+    cssText.css("resize", "auto");
+    cssText.css("width", "100%");
+    cssText.css("height", "10em");
+    cssText.change(() => {
+      updateCSS(target);
+    });
+
+    cssDiv.append("<div>Custom CSS</div>");
+    cssDiv.append(cssText);
+
+    return cssDiv;
+  };
+
+  const getFieldTypeDiv = () => {
+    let fieldTypeDiv = $("<div>");
+    let fieldTypeSelect = $("<select>");
+    fieldTypeSelect.prop("id", "fieldTypeSelect");
+    let currentFieldType = components.getType(target);
+
+    let availableCompTypes = [
+      constants.TOOLS.TEXTINPUT,
+      constants.TOOLS.TEXTAREA,
+      constants.TOOLS.CHECKBOX,
+    ];
+
+    availableCompTypes.forEach((elt) => {
+      fieldTypeSelect.append(
+        "<option value='" +
+          elt +
+          "' " +
+          (currentFieldType == elt ? "selected='selected'" : "") +
+          ">" +
+          elt +
+          "</option>"
+      );
+    });
+
+    fieldTypeSelect.change(() => {
+      changeComponentType(target);
+    });
+
+    fieldTypeDiv.append(fieldTypeSelect);
+
+    return fieldTypeDiv;
+  };
+
+  const getButtonsDiv = () => {
+    let buttonsDiv = $("<div>");
+
+    let copyButton = $("<button>");
+    copyButton.text("Copy");
+    copyButton.click(() => {
+      copyTarget(target);
+    });
+
+    let deleteButton = $("<button>");
+    deleteButton.text("Delete");
+    deleteButton.click(() => {
+      deleteTarget(target);
+    });
+
+    let saveButton = $("<button>");
+    saveButton.text("Save");
+    saveButton.click(() => {
+      saveTarget(target);
+    });
+
+    buttonsDiv.append(copyButton);
+    buttonsDiv.append(deleteButton);
+    buttonsDiv.append(saveButton);
+
+    return buttonsDiv;
+  };
+
+  optionsDiv.append(getPositionDiv());
+  optionsDiv.append(getSizeDiv());
+  optionsDiv.append(getOrderDiv());
+  optionsDiv.append(getCSSDiv());
+  optionsDiv.append(getFieldTypeDiv());
+  optionsDiv.append(getButtonsDiv());
 
   return optionsDiv;
 };

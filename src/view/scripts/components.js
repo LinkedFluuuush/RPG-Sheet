@@ -132,9 +132,19 @@ const getAdditionalCSS = (elt) => {
 
   return additionalCSS;
 };
+
+const getType = (elt) => {
+  return $(elt).prop("tagName").toLowerCase() === "textarea"
+    ? constants.TOOLS.TEXTAREA
+    : $(elt).prop("type") === "checkbox"
+    ? constants.TOOLS.CHECKBOX
+    : constants.TOOLS.TEXTINPUT;
+};
+
 module.exports = {
   addComponent,
   calculatePercentPosition,
   calculatePercentSize,
   getAdditionalCSS,
+  getType,
 };

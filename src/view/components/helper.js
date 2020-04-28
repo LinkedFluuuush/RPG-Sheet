@@ -2,7 +2,6 @@
 
 const $ = require("jquery");
 const components = require("../scripts/components");
-const constants = require("../../constants");
 
 const handleComponentAdding = (targetElement) => {
   $(".pageContainer").css("cursor", "copy");
@@ -120,12 +119,7 @@ const handleComponentCopying = (component, callback = null) => {
   previewRectangle.css("pointer-events", "none");
   $("body").append(previewRectangle);
 
-  let targetElement =
-    $(component).prop("tagName").toLowerCase() === "textarea"
-      ? constants.TOOLS.TEXTAREA
-      : $(component).prop("type") === "checkbox"
-      ? constants.TOOLS.CHECKBOX
-      : constants.TOOLS.TEXTINPUT;
+  let targetElement = components.getType(component);
 
   const doCopy = (event) => {
     event.preventDefault();
@@ -148,12 +142,24 @@ const handleComponentCopying = (component, callback = null) => {
       additionalCSS
     );
 
+    endCopying(true);
+  };
+
+  const endCopyingKeyEvent = (event) => {
+    if (event.code === "Escape") {
+      event.preventDefault();
+      endCopying();
+    }
+  };
+  const endCopying = (copyDone = false) => {
     previewRectangle.remove();
     $(".pageContainer").off("mousemove", updatePreviewRectangle);
     $(".pageContainer").off("mouseup", doCopy);
     $(".pageContainer").css("cursor", "");
 
-    if (callback) {
+    $(document).off("keydown", endCopyingKeyEvent);
+
+    if (copyDone && callback) {
       callback();
     }
   };
@@ -170,6 +176,7 @@ const handleComponentCopying = (component, callback = null) => {
 
   $(".pageContainer").on("mouseup", doCopy);
   $(".pageContainer").on("mousemove", updatePreviewRectangle);
+  $(document).on("keydown", endCopyingKeyEvent);
 };
 
 module.exports = {
