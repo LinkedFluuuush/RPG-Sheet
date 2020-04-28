@@ -250,6 +250,18 @@ const keyBoardShortcutsEvent = (event) => {
           copyTarget(target);
         }
         break;
+      case "KeyL":
+        alignToTarget(target, "left");
+        break;
+      case "KeyR":
+        alignToTarget(target, "right");
+        break;
+      case "KeyT":
+        alignToTarget(target, "top");
+        break;
+      case "KeyB":
+        alignToTarget(target, "bottom");
+        break;
       case "ArrowLeft":
         handleDirectionEvent(target, event, "left");
         break;
