@@ -241,6 +241,7 @@ const keyBoardShortcutsEvent = (event) => {
     !$(".optionsDiv").has(event.target).length &&
     $(event.target).prop("id") !== "cornerOrderInput"
   ) {
+    console.log(event);
     switch (event.code) {
       case "Delete":
         deleteTarget(target);
@@ -262,6 +263,12 @@ const keyBoardShortcutsEvent = (event) => {
       case "ArrowDown":
         handleDirectionEvent(target, event, "down");
         break;
+    }
+
+    if (new RegExp("^(Numpad|Digit)?[0-9]$").test(event.code)) {
+      $("#cornerOrderInput").val("");
+      $("#cornerOrderInput").focus();
+      $("#cornerOrderInput").trigger("input");
     }
   }
 
@@ -545,7 +552,6 @@ const createOrderDiv = (target) => {
 
   orderHide.text(orderInput.val());
   orderInput.width(orderHide.width());
-  orderInput.focus();
 
   return orderDiv;
 };
