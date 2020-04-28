@@ -107,15 +107,21 @@ const handleComponentCopying = (component, callback = null) => {
   $(".pageContainer").css("cursor", "copy");
 
   let size = {
+    width: component.style.width.replace("%", ""),
+    height: component.style.height.replace("%", ""),
+  };
+
+  let previewSize = {
     width: $(component).width(),
     height: $(component).height(),
   };
+
   let previewRectangle = $("<div>");
   previewRectangle.css("border", "black 1px solid");
   previewRectangle.css("background-color", "rgba(255,255,255,0.5)");
   previewRectangle.css("position", "absolute");
-  previewRectangle.css("width", size.width);
-  previewRectangle.css("height", size.height);
+  previewRectangle.css("width", previewSize.width);
+  previewRectangle.css("height", previewSize.height);
   previewRectangle.css("pointer-events", "none");
   $("body").append(previewRectangle);
 
@@ -136,7 +142,7 @@ const handleComponentCopying = (component, callback = null) => {
       targetElement,
       $(event.target),
       components.calculatePercentPosition($(event.target), coord),
-      components.calculatePercentSize($(event.target), size),
+      size,
       false,
       0,
       additionalCSS
