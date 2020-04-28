@@ -9,7 +9,7 @@
     "start-open": "electron-forge start -- \"D:\\Utilisateurs\\LinkedFluuuush\\Google Drive\\JDR\\DnD\\FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
-    "make": "electron-forge make --arch=ia32,x64",
+    "make": "electron-forge make --arch=all",
     "publish": "electron-forge publish",
     "lint": "eslint src"
   },
