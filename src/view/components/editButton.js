@@ -64,8 +64,7 @@ const deactivate = () => {
 
 const closeOptionsDiv = () => {
   $(window).off("keydown", keyBoardShortcutsEvent);
-  $(".optionsDiv").remove();
-  $("#orderCorner").remove();
+  $(".optionsElement").remove();
 };
 
 const deleteTarget = (target) => {
@@ -83,11 +82,11 @@ const copyTarget = (target) => {
 
 const alignToTarget = (target, direction) => {
   $(".pageContainer input,textarea").off("click", clickFunction);
+  closeOptionsDiv();
   helper.handleComponentAlignment(target, direction, () => {
     deactivate();
     activate();
   });
-  closeOptionsDiv();
 };
 
 const saveTarget = (target) => {
@@ -285,7 +284,8 @@ const initKeyboardShortcuts = (target) => {
 
 const createOptionsDiv = (target, topWindow = false) => {
   let optionsDiv = $("<div>");
-  optionsDiv.prop("class", "optionsDiv");
+  optionsDiv.addClass("optionsDiv");
+  optionsDiv.addClass("optionsElement");
 
   if (topWindow) {
     optionsDiv.css("top", "5%");
@@ -546,6 +546,7 @@ const createOrderDiv = (target) => {
   orderDiv.css("background", "white");
   orderDiv.css("padding", "2px");
 
+  orderDiv.addClass("optionsElement");
   orderDiv.prop("id", "orderCorner");
   $(event.target).parent().append(orderDiv);
   updatePosition(event.target);

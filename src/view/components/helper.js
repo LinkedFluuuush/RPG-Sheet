@@ -230,7 +230,7 @@ const handleComponentAlignment = (component, direction, callback = null) => {
     }
   };
 
-  $(".pageContainer input").on("click", doAlign);
+  $(component).parent().find("input,textarea").on("click", doAlign);
 
   let doneButton = $("<button>");
   doneButton.text("Done");
@@ -239,9 +239,10 @@ const handleComponentAlignment = (component, direction, callback = null) => {
   doneButton.css("left", "50%");
   doneButton.css("bottom", "5%");
   doneButton.css("transform", "translate(-50%, 0)");
+  doneButton.addClass("optionsElement");
 
   doneButton.click(() => {
-    $(".pageContainer input").off("mouseup", doAlign);
+    $(".pageContainer input,textarea").off("mouseup", doAlign);
     doneButton.remove();
 
     if (callback) {
