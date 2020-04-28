@@ -3,6 +3,7 @@
 const $ = require("jquery");
 const { dialog } = require("electron").remote;
 const fs = require("fs");
+const utils = require("./utils");
 
 let constants = require("../../constants");
 let mainScript = require("./mainScript");
@@ -25,6 +26,7 @@ const saveSheetAsTemplate = () => {
 };
 
 const handleSaveFile = (fileName = null, template = false) => {
+  toolbar.setTool(constants.TOOLS.POINTER);
   const sheetData = createSheetData(template);
   console.debug(sheetData);
 
@@ -63,10 +65,13 @@ const doSaveData = (fileData, data) => {
   // fileName is a string that contains the path and filename created in the save file dialog.
   fs.writeFile(savedFileName, JSON.stringify(data), (err) => {
     if (err) {
-      alert("An error ocurred creating the file " + err.message);
+      utils.displayPopInMsg(
+        "An error ocurred creating the file " + err.message,
+        "error"
+      );
+    } else {
+      utils.displayPopInMsg("The file has been succesfully saved", "success");
     }
-
-    alert("The file has been succesfully saved");
   });
 };
 

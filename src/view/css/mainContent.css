@@ -79,3 +79,26 @@ textarea {
 .optionsDiv button {
   margin-left: 10px;
 }
+
+.popInMsg {
+  position: absolute;
+  top: 10%;
+  left: 50%;
+  transform: translate(-50%, 0);
+  display: none;
+  font-size: 20;
+  padding: 15px;
+  border-radius: 15px;
+}
+
+.successMsg {
+  background-color: #def0d8;
+  border: #007e33 2px solid;
+  color: #003a17;
+}
+
+.errorMsg {
+  background-color: #f2dedf;
+  border: #cc0000 2px solid;
+  color: #cc0000;
+}
