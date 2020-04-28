@@ -8,6 +8,7 @@ let constants = require("../../constants");
 let mainScript = require("./mainScript");
 let pageManager = require("./pages");
 let components = require("./components");
+let toolbar = require("./toolbar");
 
 let savedFileName = null;
 
@@ -92,15 +93,7 @@ const createSheetData = (template = false) => {
           fieldValue = $(elt).val();
         }
 
-        let additionalCSS = [];
-        for (let cssElt of elt.style) {
-          if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
-            additionalCSS.push({
-              prop: cssElt,
-              value: template ? "" : elt.style[cssElt],
-            });
-          }
-        }
+        let additionalCSS = components.getAdditionalCSS(elt);
 
         let fieldData = {
           position: {
@@ -111,13 +104,8 @@ const createSheetData = (template = false) => {
             width: elt.style.width.replace("%", ""),
             height: elt.style.height.replace("%", ""),
           },
-          value: fieldValue,
-          type:
-            $(elt).prop("tagName").toLowerCase() === "textarea"
-              ? constants.TOOLS.TEXTAREA
-              : $(elt).prop("type") === "checkbox"
-              ? constants.TOOLS.CHECKBOX
-              : constants.TOOLS.TEXTINPUT,
+          value: template ? "" : fieldValue,
+          type: components.getType(elt),
           order: $(elt).prop("tabindex") ? $(elt).prop("tabindex") : 0,
           additionalCSS: additionalCSS,
         };
@@ -193,6 +181,8 @@ const generateFromData = (data = null) => {
   }
 
   console.log("Generated from " + JSON.stringify(data));
+
+  toolbar.setTool(constants.TOOLS.POINTER);
 };
 
 const newSheet = () => {

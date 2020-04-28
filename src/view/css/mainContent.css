@@ -2,6 +2,7 @@ body {
   margin: 0;
   background-color: lightgray;
   height: 100%;
+  font-family: sans-serif;
 }
 
 #menuBar {
@@ -59,8 +60,22 @@ textarea {
   width: 500px;
 }
 
-.pageContainer .optionsDiv {
+.optionsDiv {
   position: absolute;
+  left: 50%;
+  transform: translate(-50%, 0);
   background-color: white;
   border: 1px solid black;
+  display: flex;
+  flex-direction: column;
+  text-align: center;
+  padding: 10px 10px 0px 10px;
+}
+
+.optionsDiv > div {
+  margin-bottom: 10px;
+}
+
+.optionsDiv button {
+  margin-left: 10px;
 }

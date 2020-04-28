@@ -119,8 +119,32 @@ const addComponent = (
   return newElement;
 };
 
+const getAdditionalCSS = (elt) => {
+  let additionalCSS = [];
+  for (let cssElt of elt.style) {
+    if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
+      additionalCSS.push({
+        prop: cssElt,
+        value: elt.style[cssElt],
+      });
+    }
+  }
+
+  return additionalCSS;
+};
+
+const getType = (elt) => {
+  return $(elt).prop("tagName").toLowerCase() === "textarea"
+    ? constants.TOOLS.TEXTAREA
+    : $(elt).prop("type") === "checkbox"
+    ? constants.TOOLS.CHECKBOX
+    : constants.TOOLS.TEXTINPUT;
+};
+
 module.exports = {
   addComponent,
   calculatePercentPosition,
   calculatePercentSize,
+  getAdditionalCSS,
+  getType,
 };
