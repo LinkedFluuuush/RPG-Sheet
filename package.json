@@ -1,7 +1,7 @@
 {
   "name": "rpgsheet",
   "productName": "rpgsheet",
-  "version": "0.2.0-alpha",
+  "version": "0.2.1-alpha",
   "titleName": "RPG Sheet",
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
