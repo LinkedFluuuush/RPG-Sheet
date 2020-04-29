@@ -484,28 +484,53 @@ const createOptionsDiv = (target, topWindow = false) => {
     let buttonsDiv = $("<div>");
 
     let leftButton = $("<button>");
-    leftButton.text("Align others to left");
+    let leftIcon = $("<img>");
+    leftIcon.prop("src", "./img/alignLeft.svg");
+    leftButton.append(leftIcon);
     leftButton.click(() => {
       alignToTarget(target, "left");
     });
+    leftButton.prop(
+      "title",
+      "Align other elements to left of this element (L)"
+    );
+    leftButton.css("width", "10%");
 
     let rightButton = $("<button>");
-    rightButton.text("Align others to right");
+    let rightIcon = $("<img>");
+    rightIcon.prop("src", "./img/alignRight.svg");
+    rightButton.append(rightIcon);
     rightButton.click(() => {
       alignToTarget(target, "right");
     });
+    rightButton.prop(
+      "title",
+      "Align other elements to right of this element (R)"
+    );
+    rightButton.css("width", "10%");
 
     let topButton = $("<button>");
-    topButton.text("Align others to top");
+    let topIcon = $("<img>");
+    topIcon.prop("src", "./img/alignTop.svg");
+    topButton.append(topIcon);
     topButton.click(() => {
       alignToTarget(target, "top");
     });
+    topButton.prop("title", "Align other elements to top of this element (T)");
+    topButton.css("width", "10%");
 
     let bottomButton = $("<button>");
-    bottomButton.text("Align others to bottom");
+    let bottomIcon = $("<img>");
+    bottomIcon.prop("src", "./img/alignBottom.svg");
+    bottomButton.append(bottomIcon);
     bottomButton.click(() => {
       alignToTarget(target, "bottom");
     });
+    bottomButton.prop(
+      "title",
+      "Align other elements to bottom of this element (B)"
+    );
+    bottomButton.css("width", "10%");
 
     buttonsDiv.append(leftButton);
     buttonsDiv.append(rightButton);
