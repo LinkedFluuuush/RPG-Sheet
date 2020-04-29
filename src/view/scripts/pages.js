@@ -78,21 +78,15 @@ const setPageImage = async (page, image, imageWidth = null) => {
   }
 
   page.css("background-image", "url('" + backgroundImg + "')");
-  page.find(".pageImgHolder").remove();
-
-  let pageHolder = $("<img>");
-  pageHolder.addClass("pageImgHolder");
-  pageHolder.prop("src", backgroundImg);
 
   if (imageWidth) {
-    pageHolder.css("width", imageWidth);
+    page.css("width", imageWidth);
   }
 
   let originalSize = await getImageDimensions(backgroundImg);
-  pageHolder.prop("originalWidth", originalSize.w);
-  pageHolder.prop("originalHeight", originalSize.h);
-
-  page.append(pageHolder);
+  page.prop("originalWidth", originalSize.w);
+  page.prop("originalHeight", originalSize.h);
+  page.prop("backgroundRatio", originalSize.w / originalSize.h);
 };
 
 function getImageDimensions(base64) {

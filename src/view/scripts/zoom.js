@@ -4,79 +4,68 @@ const $ = require("jquery");
 const remote = require("electron").remote;
 const constants = require("../../constants");
 
+let animFrameRequested = false;
+let zoomTimer = null;
+
+const calculateHeight = () => {
+  $.each($(".pageContainer"), (idx, elt) => {
+    $(elt).height($(elt).width() / elt.backgroundRatio);
+  });
+};
+
+const calculateWidth = () => {
+  $.each($(".pageContainer"), (idx, elt) => {
+    $(elt).css("flex-basis", $(elt).height() * elt.backgroundRatio);
+  });
+};
+
 const zoomIn = () => {
-  $(".pageContainer .pageImgHolder").width(
-    $(".pageContainer .pageImgHolder").width() + 50
-  );
+  $(".pageContainer").css("flex-basis", $(".pageContainer").width() + 50);
+  calculateHeight();
 };
 
 const zoomOut = () => {
-  $(".pageContainer .pageImgHolder").width(
-    $(".pageContainer .pageImgHolder").width() - 50
-  );
+  $(".pageContainer").css("flex-basis", $(".pageContainer").width() - 50);
+  calculateHeight();
 };
 
 const zoomToWidth = () => {
-  $(".pageContainer .pageImgHolder").width($("#mainContent").innerWidth() - 10);
+  $(".pageContainer").css("flex-basis", $("#mainContent").innerWidth() - 10);
+  calculateHeight();
 };
 
 const zoomToNatural = () => {
-  $(".pageContainer .pageImgHolder").width(
-    $(".pageContainer .pageImgHolder")[0].naturalWidth
-  );
+  $(".pageContainer").css("flex-basis", $(".pageContainer")[0].originalWidth);
+  calculateHeight();
 };
 
 const zoomToHeight = () => {
-  if ($(".pageContainer .pageImgHolder").length > 0) {
-    let naturalSizes = {
-      width: $(".pageContainer .pageImgHolder")[0].originalWidth,
-      height: $(".pageContainer .pageImgHolder")[0].originalHeight,
-    };
-
-    let newWidth =
-      (naturalSizes.width * ($("#mainContent").innerHeight() - 10)) /
-      naturalSizes.height;
-
-    $(".pageContainer .pageImgHolder").width(newWidth);
-  }
-  console.debug(
-    "Zoomed " +
-      $(".pageContainer .pageImgHolder").length +
-      " pages to height " +
-      $("#mainContent").innerHeight()
-  );
+  $(".pageContainer").height($("#mainContent").innerHeight() - 10);
+  calculateWidth();
 };
 
-const updateInputFontSize = (target = null) => {
-  let targetsToUpdate;
-  if (target) {
-    targetsToUpdate = $(target);
-  } else {
-    targetsToUpdate = $("*." + constants.TOOLS.TEXTINPUT);
-  }
-
-  $.each(targetsToUpdate, (idx, elt) => {
-    console.log("Updating size for " + elt);
+const updateAllInputsFontSize = () => {
+  $.each($("*." + constants.TOOLS.TEXTINPUT), (idx, elt) => {
     if ($(elt).val().length > 0) {
-      while (elt.scrollHeight <= elt.clientHeight) {
-        console.log($(elt).css("font-size"));
-        console.log(elt.scrollHeight + " <= " + elt.clientHeight);
-
-        $(elt).css("font-size", "+=1");
-      }
-
-      console.log("End grow, shrink now");
-
-      while (elt.scrollHeight > elt.clientHeight) {
-        console.log($(elt).css("font-size"));
-        console.log(elt.scrollHeight + " > " + elt.clientHeight);
-
-        $(elt).css("font-size", "-=1");
-      }
-    } else {
-      $(elt).css("font-size", elt.clientHeight * 0.9);
+      setTimeout(() => {
+        updateInputFontSize(elt);
+      }, 0);
     }
   });
+};
+
+const updateInputFontSize = async (target) => {
+  if ($(target).val().length > 0) {
+    while (target.scrollHeight <= target.clientHeight) {
+      $(target).css("font-size", "+=2");
+    }
+
+    while (target.scrollHeight > target.clientHeight) {
+      $(target).css("font-size", "-=2");
+    }
+  } else {
+    $(target).css("font-size", target.clientHeight * 0.9);
+  }
 };
 
 const zoomDefaultHandler = (event) => {
@@ -88,35 +77,49 @@ const zoomDefaultHandler = (event) => {
   if (hotKey == true && event.key == "0") {
     event.preventDefault();
     zoomToHeight();
-    updateInputFontSize();
+    updateAllInputsFontSize();
   }
   if (hotKey == true && event.key == "1") {
     event.preventDefault();
     zoomToNatural();
-    updateInputFontSize();
+    updateAllInputsFontSize();
   }
 
   if (hotKey == true && event.key == "2") {
     event.preventDefault();
     zoomToWidth();
-    updateInputFontSize();
+    updateAllInputsFontSize();
   }
 };
 
 const zoomHandler = (event) => {
-  let hotKey = event.ctrlKey;
-  if (remote.process.platform === "darwin") {
-    hotKey = event.metaKey;
-  }
+  if (!animFrameRequested) {
+    animFrameRequested = true;
+    requestAnimationFrame(function () {
+      let hotKey = event.ctrlKey;
+      if (remote.process.platform === "darwin") {
+        hotKey = event.metaKey;
+      }
 
-  if (hotKey == true) {
-    event.preventDefault();
-    if (event.originalEvent.deltaY > 0) {
-      zoomOut();
-    } else {
-      zoomIn();
-    }
-    updateInputFontSize();
+      setTimeout(() => {
+        if (hotKey == true) {
+          if (event.originalEvent.deltaY > 0) {
+            zoomOut();
+          } else {
+            zoomIn();
+          }
+        }
+      }, 0);
+
+      if (zoomTimer !== null) {
+        clearTimeout(zoomTimer);
+      }
+
+      zoomTimer = setTimeout(() => {
+        updateAllInputsFontSize();
+      }, 100);
+      animFrameRequested = false;
+    });
   }
 };
 
@@ -129,7 +132,7 @@ const initZoomControls = () => {
   $(window).bind("keydown", zoomDefaultHandler);
 
   zoomToHeight();
-  updateInputFontSize();
+  updateAllInputsFontSize();
 };
 
 module.exports = {
