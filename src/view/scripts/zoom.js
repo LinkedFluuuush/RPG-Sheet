@@ -2,6 +2,7 @@
 
 const $ = require("jquery");
 const remote = require("electron").remote;
+const constants = require("../../constants");
 
 const zoomIn = () => {
   $(".pageContainer .pageImgHolder").width(
@@ -46,9 +47,35 @@ const zoomToHeight = () => {
   );
 };
 
-const updateInputFontSize = () => {
-  $("input").css("font-size", (idx) => {
-    return $($("input")[idx]).height() * 0.9;
+const updateInputFontSize = (target = null) => {
+  let targetsToUpdate;
+  if (target) {
+    targetsToUpdate = $(target);
+  } else {
+    targetsToUpdate = $("*." + constants.TOOLS.TEXTINPUT);
+  }
+
+  $.each(targetsToUpdate, (idx, elt) => {
+    console.log("Updating size for " + elt);
+    if ($(elt).val().length > 0) {
+      while (elt.scrollHeight <= elt.clientHeight) {
+        console.log($(elt).css("font-size"));
+        console.log(elt.scrollHeight + " <= " + elt.clientHeight);
+
+        $(elt).css("font-size", "+=1");
+      }
+
+      console.log("End grow, shrink now");
+
+      while (elt.scrollHeight > elt.clientHeight) {
+        console.log($(elt).css("font-size"));
+        console.log(elt.scrollHeight + " > " + elt.clientHeight);
+
+        $(elt).css("font-size", "-=1");
+      }
+    } else {
+      $(elt).css("font-size", elt.clientHeight * 0.9);
+    }
   });
 };
 
@@ -107,4 +134,5 @@ const initZoomControls = () => {
 
 module.exports = {
   initZoomControls,
+  updateInputFontSize,
 };

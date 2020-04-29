@@ -53,6 +53,7 @@ textarea {
   margin: 0;
   resize: none;
   background-color: transparent;
+  font-size: 12px;
 }
 
 .pageImgHolder {
@@ -101,4 +102,9 @@ textarea {
   background-color: #f2dedf;
   border: #cc0000 2px solid;
   color: #cc0000;
+}
+
+.unscrollable {
+  overflow: hidden;
+  overflow-wrap: break-word;
 }
