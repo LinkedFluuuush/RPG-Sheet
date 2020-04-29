@@ -11,6 +11,10 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop(
+    "title",
+    "Page edition tool (Ctrl+Alt+E)\nAdd pages, reorganize pages order and change pages background"
+  );
 
   let icon = $("<img>");
   icon.prop("src", "./img/reorganize.svg");
@@ -47,10 +51,22 @@ const activate = () => {
 
   let saveButton = $("<button>");
   saveButton.append("Save");
-  saveButton.click(() => {
+
+  const saveActionKey = (event) => {
+    if (event.code === "Escape" || event.code === "Enter") {
+      saveAction();
+    }
+  };
+
+  const saveAction = () => {
     overlay.remove();
     toolBar.setTool(constants.TOOLS.POINTER);
-  });
+    $(document).off("keydown", saveActionKey);
+  };
+
+  $(document).on("keydown", saveActionKey);
+
+  saveButton.click(saveAction);
   saveButton.css("margin", "10px auto auto auto");
 
   overlay.append(reorganizeDiv);
