@@ -1,6 +1,8 @@
 "use strict";
 
 const { app, Menu } = require("electron");
+const constants = require("../constants");
+
 const isMac = process.platform === "darwin";
 
 const createMenu = () => {
@@ -88,6 +90,53 @@ const createMenu = () => {
           : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
       ],
     },
+    {
+      label: "Outils",
+      submenu: [
+        {
+          label: "Pointer",
+          accelerator: "Alt+P",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.POINTER);
+          },
+        },
+        {
+          label: "Edit",
+          accelerator: "Alt+E",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.EDIT);
+          },
+        },
+        {
+          label: "Sheet structure",
+          accelerator: "CommandOrControl+Alt+E",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.REORGANIZE);
+          },
+        },
+        {
+          label: "Add TextInput",
+          accelerator: "Alt+T",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.TEXTINPUT);
+          },
+        },
+        {
+          label: "Add TextArea",
+          accelerator: "CommandOrControl+Alt+P",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.TEXTAREA);
+          },
+        },
+        {
+          label: "Add Checkbox",
+          accelerator: "Alt+C",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.CHECKBOX);
+          },
+        },
+      ],
+    },
     // { role: 'windowMenu' }
     {
       label: "Fenêtre",
@@ -155,6 +204,13 @@ const openAction = (window, file = false) => {
     code += `'${file}'`;
   }
   code += ");";
+  window.webContents.executeJavaScript(code);
+};
+
+const selectToolAction = (window, tool) => {
+  console.debug("Requested open sheet");
+  let code = "require('./scripts/toolbar.js').setTool('" + tool + "');";
+  console.debug("Executed " + code);
   window.webContents.executeJavaScript(code);
 };
 

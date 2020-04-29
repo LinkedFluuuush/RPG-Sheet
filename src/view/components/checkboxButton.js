@@ -10,6 +10,8 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop("title", "Checkbox tool (C)\nAdd checkboxes");
+
   let icon = $("<img>");
   icon.prop("src", "./img/checkbox.svg");
 
@@ -36,5 +38,5 @@ const deactivate = () => {
 module.exports = {
   getElement,
   activate,
-  deactivate
+  deactivate,
 };

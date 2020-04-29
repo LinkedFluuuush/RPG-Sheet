@@ -7,8 +7,12 @@ const selfId = constants.TOOLS.POINTER;
 
 const getElement = () => {
   let elt = $("<button>");
-  elt.attr("id", selfId);
-  elt.attr("class", "toolbarButton");
+  elt.prop("id", selfId);
+  elt.prop("class", "toolbarButton");
+  elt.prop(
+    "title",
+    "Default tool (P)\nEnables sheet viewing and character edition"
+  );
 
   let icon = $("<img>");
   icon.prop("src", "./img/cursor.svg");
@@ -31,5 +35,5 @@ const deactivate = () => {
 module.exports = {
   getElement,
   activate,
-  deactivate
+  deactivate,
 };

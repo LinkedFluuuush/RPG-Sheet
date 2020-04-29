@@ -11,6 +11,10 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop(
+    "title",
+    "Page edition tool (Ctrl+E)\nAdd pages, reorganize pages order and change pages background"
+  );
 
   let icon = $("<img>");
   icon.prop("src", "./img/reorganize.svg");

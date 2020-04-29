@@ -12,6 +12,7 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop("title", "Edition tool (E)\nEnables sheet fields editing");
 
   let icon = $("<img>");
   icon.prop("src", "./img/edit.svg");
@@ -216,6 +217,8 @@ const changeComponentType = (target) => {
 const keyBoardShortcutsEvent = (event) => {
   let hotkey =
     remote.process.platform === "darwin" ? event.metaKey : event.ctrlKey;
+  let anyModifier =
+    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
   let target = event.data;
 
   const handleDirectionEvent = (target, event, direction) => {
@@ -251,16 +254,24 @@ const keyBoardShortcutsEvent = (event) => {
         }
         break;
       case "KeyL":
-        alignToTarget(target, "left");
+        if (!anyModifier) {
+          alignToTarget(target, "left");
+        }
         break;
       case "KeyR":
-        alignToTarget(target, "right");
+        if (!anyModifier) {
+          alignToTarget(target, "right");
+        }
         break;
       case "KeyT":
-        alignToTarget(target, "top");
+        if (!anyModifier) {
+          alignToTarget(target, "top");
+        }
         break;
       case "KeyB":
-        alignToTarget(target, "bottom");
+        if (!anyModifier) {
+          alignToTarget(target, "bottom");
+        }
         break;
       case "ArrowLeft":
         handleDirectionEvent(target, event, "left");
