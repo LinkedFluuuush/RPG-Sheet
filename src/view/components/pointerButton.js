@@ -11,7 +11,7 @@ const getElement = () => {
   elt.prop("class", "toolbarButton");
   elt.prop(
     "title",
-    "Default tool (P)\nEnables sheet viewing and character edition"
+    "Default tool (Alt+P)\nEnables sheet viewing and character edition"
   );
 
   let icon = $("<img>");

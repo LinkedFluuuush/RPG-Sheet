@@ -12,7 +12,7 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
-  elt.prop("title", "Edition tool (E)\nEnables sheet fields editing");
+  elt.prop("title", "Edition tool (Alt+E)\nEnables sheet fields editing");
 
   let icon = $("<img>");
   icon.prop("src", "./img/edit.svg");

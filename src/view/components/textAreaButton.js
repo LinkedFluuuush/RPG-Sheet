@@ -10,7 +10,7 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
-  elt.prop("title", "Text Area tool (Ctrl+T)\nAdd multi-line text inputs");
+  elt.prop("title", "Text Area tool (Ctrl+Alt+T)\nAdd multi-line text inputs");
 
   let icon = $("<img>");
   icon.prop("src", "./img/textarea.svg");

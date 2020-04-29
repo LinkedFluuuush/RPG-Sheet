@@ -13,7 +13,7 @@ const getElement = () => {
   elt.attr("class", "toolbarButton");
   elt.prop(
     "title",
-    "Page edition tool (Ctrl+E)\nAdd pages, reorganize pages order and change pages background"
+    "Page edition tool (Ctrl+Alt+E)\nAdd pages, reorganize pages order and change pages background"
   );
 
   let icon = $("<img>");
