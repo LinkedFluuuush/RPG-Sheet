@@ -247,14 +247,24 @@ const handleComponentAlignment = (component, direction, callback = null) => {
   doneButton.css("transform", "translate(-50%, 0)");
   doneButton.addClass("optionsElement");
 
-  doneButton.click(() => {
+  const doneFunctionEvent = (event) => {
+    if (event.code === "Escape" || event.code === "Enter") {
+      doneFunction();
+    }
+  };
+
+  const doneFunction = () => {
     $(".pageContainer input,textarea").off("mouseup", doAlign);
+    $(window).off("keydown", doneFunctionEvent);
     doneButton.remove();
 
     if (callback) {
       callback();
     }
-  });
+  };
+  doneButton.click(doneFunction);
+
+  $(window).on("keydown", doneFunctionEvent);
 
   $("body").append(doneButton);
   $(".pageContainer input,textarea").css("outline", "red 2px solid");

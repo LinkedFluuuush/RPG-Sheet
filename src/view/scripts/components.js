@@ -2,6 +2,7 @@
 
 const $ = require("jquery");
 const constants = require("../../constants");
+const zoomManager = require("./zoom");
 
 const calculatePercentPosition = (page, position) => {
   return {
@@ -41,15 +42,21 @@ const addComponent = (
 
   switch (type) {
     case constants.TOOLS.TEXTINPUT:
-      newElement = $("<input>");
-      newElement.prop("type", "text");
+      newElement = $("<textArea>");
+      newElement.prop("sheet.elementType", constants.TOOLS.TEXTINPUT);
+      newElement.addClass("unscrollable");
+      newElement.addClass(constants.TOOLS.TEXTINPUT);
+
+      newElement.on("input", textInputAutoSize);
 
       if (value) {
-        newElement.val(value);
+        newElement.text(value);
       }
       break;
     case constants.TOOLS.TEXTAREA:
       newElement = $("<textArea>");
+      newElement.prop("sheet.elementType", constants.TOOLS.TEXTAREA);
+      newElement.addClass(constants.TOOLS.TEXTAREA);
 
       if (value) {
         newElement.text(value);
@@ -57,7 +64,9 @@ const addComponent = (
       break;
     case constants.TOOLS.CHECKBOX:
       newElement = $("<input>");
+      newElement.prop("sheet.elementType", constants.TOOLS.CHECKBOX);
       newElement.prop("type", "checkbox");
+      newElement.addClass(constants.TOOLS.CHECKBOX);
 
       if (value) {
         newElement.prop("checked", true);
@@ -82,22 +91,24 @@ const addComponent = (
 
     let additionalCSSArray = [];
     for (let cssElt of cssLines) {
-      if (!constants.UNEDITABLE_CSS.includes(cssElt)) {
-        let newCSSElt = {
-          prop: cssElt.split(": ", 2)[0],
-          value: cssElt.split(": ", 2)[1],
-        };
+      let newCSSElt = {
+        prop: cssElt.split(": ", 2)[0],
+        value: cssElt.split(": ", 2)[1],
+      };
 
-        if (newCSSElt.value && newCSSElt.value.endsWith(";")) {
-          newCSSElt.value = newCSSElt.value.substring(
-            0,
-            newCSSElt.value.length - 1
-          );
-        }
+      if (newCSSElt.value && newCSSElt.value.endsWith(";")) {
+        newCSSElt.value = newCSSElt.value.substring(
+          0,
+          newCSSElt.value.length - 1
+        );
+      }
 
-        if (newCSSElt.prop) {
-          additionalCSSArray.push(newCSSElt);
-        }
+      if (
+        newCSSElt.prop &&
+        !constants.UNEDITABLE_CSS.includes(newCSSElt.prop)
+      ) {
+        console.debug("Adding CSS " + newCSSElt.prop);
+        additionalCSSArray.push(newCSSElt);
       }
     }
 
@@ -111,11 +122,6 @@ const addComponent = (
   }
 
   $(page).append(newElement);
-
-  if (type === constants.TOOLS.TEXTINPUT) {
-    newElement.css("font-size", newElement.height() * 0.9);
-  }
-
   return newElement;
 };
 
@@ -134,11 +140,19 @@ const getAdditionalCSS = (elt) => {
 };
 
 const getType = (elt) => {
-  return $(elt).prop("tagName").toLowerCase() === "textarea"
+  return $(elt).prop("sheet.elementType")
+    ? $(elt).prop("sheet.elementType")
+    : $(elt).prop("tagName").toLowerCase() === "textarea"
     ? constants.TOOLS.TEXTAREA
     : $(elt).prop("type") === "checkbox"
     ? constants.TOOLS.CHECKBOX
     : constants.TOOLS.TEXTINPUT;
+};
+
+const textInputAutoSize = (event) => {
+  let target = event.target;
+  $(target).val($(target).val().replace("\n", ""));
+  zoomManager.updateInputFontSize(target);
 };
 
 module.exports = {
@@ -147,4 +161,5 @@ module.exports = {
   calculatePercentSize,
   getAdditionalCSS,
   getType,
+  textInputAutoSize,
 };

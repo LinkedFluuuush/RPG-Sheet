@@ -1,6 +1,8 @@
 "use strict";
 
 const { app, Menu } = require("electron");
+const constants = require("../constants");
+
 const isMac = process.platform === "darwin";
 
 const createMenu = () => {
@@ -88,6 +90,93 @@ const createMenu = () => {
           : [{ role: "delete" }, { type: "separator" }, { role: "selectAll" }]),
       ],
     },
+    {
+      label: "Affichage",
+      submenu: [
+        {
+          label: "Zoom In",
+          accelerator: "CommandOrControl+numadd",
+          click: (menuItem, window) => {
+            zoomAction(window, "in");
+          },
+        },
+        {
+          label: "Zoom Out",
+          accelerator: "CommandOrControl+numsub",
+          click: (menuItem, window) => {
+            zoomAction(window, "out");
+          },
+        },
+        {
+          label: "Zoom to height",
+          accelerator: "CommandOrControl+num0",
+          click: (menuItem, window) => {
+            zoomAction(window, "height");
+          },
+        },
+        {
+          label: "Zoom to 100%",
+          accelerator: "CommandOrControl+num1",
+          click: (menuItem, window) => {
+            zoomAction(window, "original");
+          },
+        },
+        {
+          label: "Zoom to width",
+          accelerator: "CommandOrControl+num2",
+          click: (menuItem, window) => {
+            zoomAction(window, "width");
+          },
+        },
+      ],
+    },
+    {
+      label: "Outils",
+      submenu: [
+        {
+          label: "Pointer",
+          accelerator: "Alt+P",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.POINTER);
+          },
+        },
+        {
+          label: "Edit",
+          accelerator: "Alt+E",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.EDIT);
+          },
+        },
+        {
+          label: "Sheet structure",
+          accelerator: "CommandOrControl+Alt+E",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.REORGANIZE);
+          },
+        },
+        {
+          label: "Add TextInput",
+          accelerator: "Alt+T",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.TEXTINPUT);
+          },
+        },
+        {
+          label: "Add TextArea",
+          accelerator: "CommandOrControl+Alt+P",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.TEXTAREA);
+          },
+        },
+        {
+          label: "Add Checkbox",
+          accelerator: "Alt+C",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.CHECKBOX);
+          },
+        },
+      ],
+    },
     // { role: 'windowMenu' }
     {
       label: "Fenêtre",
@@ -155,6 +244,39 @@ const openAction = (window, file = false) => {
     code += `'${file}'`;
   }
   code += ");";
+  window.webContents.executeJavaScript(code);
+};
+
+const selectToolAction = (window, tool) => {
+  console.debug("Requested tool selection");
+  let code = "require('./scripts/toolbar.js').setTool('" + tool + "');";
+  console.debug("Executed " + code);
+  window.webContents.executeJavaScript(code);
+};
+
+const zoomAction = (window, option) => {
+  console.debug("Requested zoom sheet : " + option);
+  let code = "require('./scripts/zoom.js').";
+
+  switch (option) {
+    case "in":
+      code += "zoomIn(150);";
+      break;
+    case "out":
+      code += "zoomOut(150);";
+      break;
+    case "width":
+      code += "zoomToWidth();";
+      break;
+    case "height":
+      code += "zoomToHeight();";
+      break;
+    case "original":
+      code += "zoomToNatural();";
+      break;
+  }
+
+  console.debug("Executed " + code);
   window.webContents.executeJavaScript(code);
 };
 

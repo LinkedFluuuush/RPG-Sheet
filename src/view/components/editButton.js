@@ -12,6 +12,7 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop("title", "Edition tool (Alt+E)\nEnables sheet fields editing");
 
   let icon = $("<img>");
   icon.prop("src", "./img/edit.svg");
@@ -216,6 +217,8 @@ const changeComponentType = (target) => {
 const keyBoardShortcutsEvent = (event) => {
   let hotkey =
     remote.process.platform === "darwin" ? event.metaKey : event.ctrlKey;
+  let anyModifier =
+    event.metaKey || event.ctrlKey || event.shiftKey || event.altKey;
   let target = event.data;
 
   const handleDirectionEvent = (target, event, direction) => {
@@ -248,6 +251,26 @@ const keyBoardShortcutsEvent = (event) => {
       case "KeyC":
         if (hotkey) {
           copyTarget(target);
+        }
+        break;
+      case "KeyL":
+        if (!anyModifier) {
+          alignToTarget(target, "left");
+        }
+        break;
+      case "KeyR":
+        if (!anyModifier) {
+          alignToTarget(target, "right");
+        }
+        break;
+      case "KeyT":
+        if (!anyModifier) {
+          alignToTarget(target, "top");
+        }
+        break;
+      case "KeyB":
+        if (!anyModifier) {
+          alignToTarget(target, "bottom");
         }
         break;
       case "ArrowLeft":
@@ -472,28 +495,53 @@ const createOptionsDiv = (target, topWindow = false) => {
     let buttonsDiv = $("<div>");
 
     let leftButton = $("<button>");
-    leftButton.text("Align others to left");
+    let leftIcon = $("<img>");
+    leftIcon.prop("src", "./img/alignLeft.svg");
+    leftButton.append(leftIcon);
     leftButton.click(() => {
       alignToTarget(target, "left");
     });
+    leftButton.prop(
+      "title",
+      "Align other elements to left of this element (L)"
+    );
+    leftButton.css("width", "10%");
 
     let rightButton = $("<button>");
-    rightButton.text("Align others to right");
+    let rightIcon = $("<img>");
+    rightIcon.prop("src", "./img/alignRight.svg");
+    rightButton.append(rightIcon);
     rightButton.click(() => {
       alignToTarget(target, "right");
     });
+    rightButton.prop(
+      "title",
+      "Align other elements to right of this element (R)"
+    );
+    rightButton.css("width", "10%");
 
     let topButton = $("<button>");
-    topButton.text("Align others to top");
+    let topIcon = $("<img>");
+    topIcon.prop("src", "./img/alignTop.svg");
+    topButton.append(topIcon);
     topButton.click(() => {
       alignToTarget(target, "top");
     });
+    topButton.prop("title", "Align other elements to top of this element (T)");
+    topButton.css("width", "10%");
 
     let bottomButton = $("<button>");
-    bottomButton.text("Align others to bottom");
+    let bottomIcon = $("<img>");
+    bottomIcon.prop("src", "./img/alignBottom.svg");
+    bottomButton.append(bottomIcon);
     bottomButton.click(() => {
       alignToTarget(target, "bottom");
     });
+    bottomButton.prop(
+      "title",
+      "Align other elements to bottom of this element (B)"
+    );
+    bottomButton.css("width", "10%");
 
     buttonsDiv.append(leftButton);
     buttonsDiv.append(rightButton);

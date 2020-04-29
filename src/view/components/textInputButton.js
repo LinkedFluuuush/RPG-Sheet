@@ -10,6 +10,7 @@ const getElement = () => {
   let elt = $("<button></button>");
   elt.attr("id", selfId);
   elt.attr("class", "toolbarButton");
+  elt.prop("title", "Text Input tool (Alt+T)\nAdd one-line text inputs");
 
   let icon = $("<img>");
   icon.prop("src", "./img/textinput.svg");
@@ -37,5 +38,5 @@ const deactivate = () => {
 module.exports = {
   getElement,
   activate,
-  deactivate
+  deactivate,
 };
