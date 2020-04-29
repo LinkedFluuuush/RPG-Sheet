@@ -19,42 +19,53 @@ const calculateWidth = () => {
   });
 };
 
-const zoomIn = () => {
-  $(".pageContainer").css("flex-basis", $(".pageContainer").width() + 50);
+const zoomIn = (step = 50) => {
+  $(".pageContainer").css("flex-basis", $(".pageContainer").width() + step);
   calculateHeight();
+  updateAllInputsFontSize();
 };
 
-const zoomOut = () => {
-  $(".pageContainer").css("flex-basis", $(".pageContainer").width() - 50);
+const zoomOut = (step = 50) => {
+  $(".pageContainer").css("flex-basis", $(".pageContainer").width() - step);
   calculateHeight();
+  updateAllInputsFontSize();
 };
 
 const zoomToWidth = () => {
   $(".pageContainer").css("flex-basis", $("#mainContent").innerWidth() - 10);
   calculateHeight();
+  updateAllInputsFontSize();
 };
 
 const zoomToNatural = () => {
   $(".pageContainer").css("flex-basis", $(".pageContainer")[0].originalWidth);
   calculateHeight();
+  updateAllInputsFontSize();
 };
 
 const zoomToHeight = () => {
   $(".pageContainer").height($("#mainContent").innerHeight() - 10);
   calculateWidth();
+  updateAllInputsFontSize();
 };
 
 const updateAllInputsFontSize = () => {
-  $.each($("*." + constants.TOOLS.TEXTINPUT), (idx, elt) => {
-    if ($(elt).val().length > 0) {
-      setTimeout(() => {
-        updateInputFontSize(elt);
-      }, 0);
-    }
-  });
+  if (zoomTimer !== null) {
+    clearTimeout(zoomTimer);
+  }
+
+  zoomTimer = setTimeout(() => {
+    $.each($("*." + constants.TOOLS.TEXTINPUT), (idx, elt) => {
+      if ($(elt).val().length > 0) {
+        setTimeout(() => {
+          updateInputFontSize(elt);
+        }, 5);
+      }
+    });
+  }, 100);
 };
 
-const updateInputFontSize = async (target) => {
+const updateInputFontSize = (target) => {
   if ($(target).val().length > 0) {
     while (target.scrollHeight <= target.clientHeight) {
       $(target).css("font-size", "+=2");
@@ -65,30 +76,6 @@ const updateInputFontSize = async (target) => {
     }
   } else {
     $(target).css("font-size", target.clientHeight * 0.9);
-  }
-};
-
-const zoomDefaultHandler = (event) => {
-  let hotKey = event.ctrlKey;
-  if (remote.process.platform === "darwin") {
-    hotKey = event.metaKey;
-  }
-
-  if (hotKey == true && event.key == "0") {
-    event.preventDefault();
-    zoomToHeight();
-    updateAllInputsFontSize();
-  }
-  if (hotKey == true && event.key == "1") {
-    event.preventDefault();
-    zoomToNatural();
-    updateAllInputsFontSize();
-  }
-
-  if (hotKey == true && event.key == "2") {
-    event.preventDefault();
-    zoomToWidth();
-    updateAllInputsFontSize();
   }
 };
 
@@ -111,13 +98,6 @@ const zoomHandler = (event) => {
         }
       }, 0);
 
-      if (zoomTimer !== null) {
-        clearTimeout(zoomTimer);
-      }
-
-      zoomTimer = setTimeout(() => {
-        updateAllInputsFontSize();
-      }, 100);
       animFrameRequested = false;
     });
   }
@@ -125,17 +105,17 @@ const zoomHandler = (event) => {
 
 const initZoomControls = () => {
   $(window).off("mousewheel", zoomHandler);
-  $(window).off("DOMMouseScroll", zoomHandler);
-  $(window).off("keydown", zoomHandler);
-  $(window).bind("mousewheel DOMMouseScroll", zoomHandler);
-
-  $(window).bind("keydown", zoomDefaultHandler);
+  $(window).bind("mousewheel", zoomHandler);
 
   zoomToHeight();
-  updateAllInputsFontSize();
 };
 
 module.exports = {
   initZoomControls,
   updateInputFontSize,
+  zoomIn,
+  zoomOut,
+  zoomToWidth,
+  zoomToHeight,
+  zoomToNatural,
 };

@@ -2,14 +2,19 @@
 
 ## Global shortcuts
 
-| Shortcut   | Action                              |
-| ---------- | ----------------------------------- |
-| Alt+P      | Activates pointer tool              |
-| Alt+E      | Activates sheet fields edition tool |
-| Ctrl+Alt+E | Activates sheet pages edition tool  |
-| Alt+T      | Activates text-input tool           |
-| Ctrl+Alt+T | Activates textarea tool             |
-| Alt+C      | Activates checkbox tool             |
+| Shortcut     | Action                              |
+| ------------ | ----------------------------------- |
+| Alt+P        | Activates pointer tool              |
+| Alt+E        | Activates sheet fields edition tool |
+| Ctrl+Alt+E   | Activates sheet pages edition tool  |
+| Alt+T        | Activates text-input tool           |
+| Ctrl+Alt+T   | Activates textarea tool             |
+| Alt+C        | Activates checkbox tool             |
+| Ctrl+Numpad+ | Zoom in                             |
+| Ctrl+Numpad- | Zoom out                            |
+| Ctrl+Numpad0 | Zoom to height                      |
+| Ctrl+Numpad1 | Zoom to original size               |
+| Ctrl+Numpad2 | Zoom to width                       |
 
 ## Character edition shortcuts
 
