@@ -21,6 +21,7 @@ const constants = {
     "outline-width",
     "font-size",
   ],
+  MIN_AREA_SIZE: 12,
 };
 
 module.exports = constants;

@@ -58,6 +58,8 @@ const addComponent = (
       newElement.prop("sheet.elementType", constants.TOOLS.TEXTAREA);
       newElement.addClass(constants.TOOLS.TEXTAREA);
 
+      newElement.on("input", textAreaAutoSize);
+
       if (value) {
         newElement.text(value);
       }
@@ -153,6 +155,11 @@ const textInputAutoSize = (event) => {
   let target = event.target;
   $(target).val($(target).val().replace("\n", ""));
   zoomManager.updateInputFontSize(target);
+};
+
+const textAreaAutoSize = (event) => {
+  let target = event.target;
+  zoomManager.updateInputFontSize(target, constants.MIN_AREA_SIZE);
 };
 
 module.exports = {

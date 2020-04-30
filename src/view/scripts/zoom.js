@@ -62,16 +62,26 @@ const updateAllInputsFontSize = () => {
         }, 5);
       }
     });
+    $.each($("*." + constants.TOOLS.TEXTAREA), (idx, elt) => {
+      if ($(elt).val().length > 0) {
+        setTimeout(() => {
+          updateInputFontSize(elt, constants.MIN_AREA_SIZE);
+        }, 5);
+      }
+    });
   }, 100);
 };
 
-const updateInputFontSize = (target) => {
+const updateInputFontSize = (target, minSize = 0) => {
   if ($(target).val().length > 0) {
     while (target.scrollHeight <= target.clientHeight) {
       $(target).css("font-size", "+=2");
     }
 
-    while (target.scrollHeight > target.clientHeight) {
+    while (
+      target.scrollHeight > target.clientHeight &&
+      Number($(target).css("font-size").replace("px", "")) > minSize
+    ) {
       $(target).css("font-size", "-=2");
     }
   } else {
