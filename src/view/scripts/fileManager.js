@@ -88,7 +88,7 @@ const createSheetData = (template = false) => {
     };
 
     $(elt)
-      .find("input,textarea")
+      .find("." + constants.INPUT_TYPES.join(",."))
       .each((idx, elt) => {
         let fieldValue;
 
