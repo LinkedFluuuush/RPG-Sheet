@@ -80,32 +80,35 @@ const updateInputFontSize = (target) => {
 };
 
 const zoomHandler = (event) => {
-  if (!animFrameRequested) {
-    animFrameRequested = true;
-    requestAnimationFrame(function () {
-      let hotKey = event.ctrlKey;
-      if (remote.process.platform === "darwin") {
-        hotKey = event.metaKey;
-      }
+  let hotKey = event.ctrlKey;
+  if (remote.process.platform === "darwin") {
+    hotKey = event.metaKey;
+  }
 
-      setTimeout(() => {
-        if (hotKey == true) {
-          if (event.originalEvent.deltaY > 0) {
+  if (hotKey == true) {
+    event.preventDefault();
+    event.stopPropagation();
+
+    if (!animFrameRequested) {
+      animFrameRequested = true;
+      requestAnimationFrame(function () {
+        setTimeout(() => {
+          if (event.deltaY > 0) {
             zoomOut();
           } else {
             zoomIn();
           }
-        }
-      }, 0);
+        }, 0);
 
-      animFrameRequested = false;
-    });
+        animFrameRequested = false;
+      });
+    }
   }
 };
 
 const initZoomControls = () => {
-  $(window).off("mousewheel", zoomHandler);
-  $(window).bind("mousewheel", zoomHandler);
+  window.removeEventListener("wheel", zoomHandler, { passive: false });
+  window.addEventListener("wheel", zoomHandler, { passive: false }); // modern desktop
 
   zoomToHeight();
 };
