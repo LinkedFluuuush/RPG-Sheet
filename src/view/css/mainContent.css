@@ -56,6 +56,9 @@ textarea {
   resize: none;
   background-color: transparent;
   font-size: 12px;
+  border: none;
+  padding: 0;
+  font-family: sans-serif;
 }
 
 .optionsDiv {
@@ -72,6 +75,10 @@ textarea {
 
 .optionsDiv > div {
   margin-bottom: 10px;
+}
+
+.optionsDiv textarea {
+  border: rgb(169, 169, 169) 1px solid;
 }
 
 .optionsDiv button {
@@ -104,4 +111,9 @@ textarea {
 .unscrollable {
   overflow: hidden;
   overflow-wrap: break-word;
+}
+
+:focus {
+  border: none;
+  outline: none;
 }

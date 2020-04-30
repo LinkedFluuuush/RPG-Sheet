@@ -62,20 +62,58 @@ const updateAllInputsFontSize = () => {
         }, 5);
       }
     });
+    $.each($("*." + constants.TOOLS.TEXTAREA), (idx, elt) => {
+      if ($(elt).val().length > 0) {
+        setTimeout(() => {
+          updateInputFontSize(elt, constants.MIN_AREA_SIZE);
+        }, 5);
+      }
+    });
   }, 100);
 };
 
-const updateInputFontSize = (target) => {
+const updateInputFontSize = (target, minSize = 0) => {
+  $(target).css("padding-top", "0");
+
   if ($(target).val().length > 0) {
     while (target.scrollHeight <= target.clientHeight) {
       $(target).css("font-size", "+=2");
     }
 
-    while (target.scrollHeight > target.clientHeight) {
+    while (
+      target.scrollHeight > target.clientHeight &&
+      Number($(target).css("font-size").replace("px", "")) > minSize
+    ) {
       $(target).css("font-size", "-=2");
     }
+
+    let placeholderSpan = $("<div>");
+    placeholderSpan.css("visibility", "hidden");
+    placeholderSpan.css("width", $(target).width());
+    placeholderSpan.css("height", "fit-content");
+    placeholderSpan.css("font-size", $(target).css("font-size"));
+
+    if ($(target).data("elementType") === constants.TOOLS.TEXTINPUT) {
+      placeholderSpan.addClass("unscrollable");
+    } else {
+      placeholderSpan.css("overflow-wrap", "break-word");
+      placeholderSpan.css("overflow", "auto");
+      placeholderSpan.css("white-space", "pre-wrap");
+    }
+
+    placeholderSpan.text($(target).val());
+    $("body").append(placeholderSpan);
+
+    let verticalPadding = 0;
+    if ($(placeholderSpan).height() < target.clientHeight) {
+      verticalPadding = (target.clientHeight - $(placeholderSpan).height()) / 2;
+    }
+
+    $(target).css("padding-top", verticalPadding);
+
+    placeholderSpan.remove();
   } else {
-    $(target).css("font-size", target.clientHeight * 0.9);
+    $(target).css("font-size", target.clientHeight * 0.5 + "px");
   }
 };
 

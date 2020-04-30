@@ -2,6 +2,7 @@
 
 const $ = require("jquery");
 const components = require("../scripts/components");
+const constants = require("../../constants");
 
 const handleComponentAdding = (targetElement) => {
   $(".pageContainer").css("cursor", "copy");
@@ -236,7 +237,10 @@ const handleComponentAlignment = (component, direction, callback = null) => {
     }
   };
 
-  $(component).parent().find("input,textarea").on("click", doAlign);
+  $(component)
+    .parent()
+    .find("." + constants.INPUT_TYPES.join(",."))
+    .on("click", doAlign);
 
   let doneButton = $("<button>");
   doneButton.text("Done");
@@ -254,7 +258,10 @@ const handleComponentAlignment = (component, direction, callback = null) => {
   };
 
   const doneFunction = () => {
-    $(".pageContainer input,textarea").off("mouseup", doAlign);
+    $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).off(
+      "mouseup",
+      doAlign
+    );
     $(window).off("keydown", doneFunctionEvent);
     doneButton.remove();
 
@@ -267,7 +274,10 @@ const handleComponentAlignment = (component, direction, callback = null) => {
   $(window).on("keydown", doneFunctionEvent);
 
   $("body").append(doneButton);
-  $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css(
+    "outline",
+    "red 2px solid"
+  );
   $(component).css("outline", "green 2px solid");
 };
 module.exports = {
