@@ -8,6 +8,7 @@ const constants = {
     TEXTAREA: "textArea",
     CHECKBOX: "checkbox",
     REORGANIZE: "reorganize",
+    ORDER: "order",
   },
   UNEDITABLE_CSS: [
     "top",

@@ -16,6 +16,7 @@ const getElement = () => {
 
   let icon = $("<img>");
   icon.prop("src", "./img/edit.svg");
+  icon.css("width", "inherit");
 
   elt.append(icon);
 

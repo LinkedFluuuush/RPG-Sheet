@@ -14,6 +14,7 @@ const getElement = () => {
 
   let icon = $("<img>");
   icon.prop("src", "./img/checkbox.svg");
+  icon.css("width", "inherit");
 
   elt.append(icon);
 

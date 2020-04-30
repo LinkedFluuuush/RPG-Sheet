@@ -175,6 +175,13 @@ const createMenu = () => {
             selectToolAction(window, constants.TOOLS.CHECKBOX);
           },
         },
+        {
+          label: "Order Fields",
+          accelerator: "Alt+O",
+          click: (menuItem, window) => {
+            selectToolAction(window, constants.TOOLS.ORDER);
+          },
+        },
       ],
     },
     // { role: 'windowMenu' }
