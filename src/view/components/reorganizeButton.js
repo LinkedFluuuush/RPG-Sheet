@@ -86,7 +86,12 @@ const generatePreviewPages = (parentDiv) => {
     pagePreview.css("height", "90%");
 
     let pageImg = $("<img>");
-    pageImg.prop("src", $(elt).find("img").prop("src"));
+    pageImg.prop(
+      "src",
+      $(elt)
+        .css("background-image")
+        .substring(5, $(elt).css("background-image").length - 2)
+    );
     pageImg.css("height", "90%");
     pageImg.css("width", "auto");
     pageImg.mouseover(() => {
