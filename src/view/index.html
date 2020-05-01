@@ -13,27 +13,21 @@
 
       $(document).ready(() => {
         const mainScript = require("./scripts/mainScript");
-        let fileName = false;
         const remote = require("electron").remote;
 
-        alert(
-          "Application launched with arguments : " +
-            JSON.stringify(remote.process.argv)
-        );
+        const { ipcRenderer } = require("electron");
 
-        if (remote.app.isPackaged) {
-          console.log("Running in prod env");
-          if (remote.process.argv.length > 1) {
-            fileName = remote.process.argv[1];
-          }
-        } else {
-          console.log("Running in dev env");
-          if (remote.process.argv.length > 2) {
-            fileName = remote.process.argv[2];
-          }
-        }
+        ipcRenderer.on("response-opened-file", (event, fileName) => {
+          console.log("Received file to open from main process : " + fileName);
+          mainScript.initApp(fileName);
+        });
 
-        mainScript.initApp(fileName);
+        // Send information to the main process
+        // if a listener has been set, then the main process
+        // will react to the request !
+        ipcRenderer.send("request-opened-file");
+
+        mainScript.initApp();
       });
     </script>
   </head>

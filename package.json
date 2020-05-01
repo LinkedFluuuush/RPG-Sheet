@@ -6,6 +6,7 @@
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
+    "start-open": "electron-forge start -- \"./examples/FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make --arch=all",
