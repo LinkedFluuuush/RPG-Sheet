@@ -20,7 +20,7 @@ app.on("will-finish-launching", () => {
   app.on("open-file", (event, file) => {
     console.log("Requested file open : " + file);
     if (win && app.isReady()) {
-      if (win.webContents.isLodaing()) {
+      if (win.webContents.isLoading()) {
         win.webContents.on("did-finish-load", () => {
           win.webContents.send("response-opened-file", fileToOpen);
         });
