@@ -37,7 +37,20 @@
         {
           "name": "@electron-forge/maker-deb",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "maintainer": "Jean-Baptiste Louvet-Daniel",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         },
         {
