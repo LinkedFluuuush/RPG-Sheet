@@ -56,7 +56,19 @@
         {
           "name": "@electron-forge/maker-rpm",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         }
       ]
