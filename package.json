@@ -6,6 +6,7 @@
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
+    "start-open": "electron-forge start -- \"./examples/FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make --arch=all",
@@ -17,7 +18,9 @@
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "extendInfo": "./Info.plist"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -35,13 +38,38 @@
         {
           "name": "@electron-forge/maker-deb",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "maintainer": "Jean-Baptiste Louvet-Daniel",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         },
         {
           "name": "@electron-forge/maker-rpm",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         }
       ]
