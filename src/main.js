@@ -22,7 +22,7 @@ app.on("will-finish-launching", () => {
     console.log("Requested file open : " + file);
     if (win && readyToReceive) {
       console.log("Sending directly");
-      win.webContents.send("response-opened-file", fileToOpen);
+      win.webContents.send("response-opened-file", file);
     } else {
       console.log("Buffering for when app is ready");
       fileToOpen = file;
