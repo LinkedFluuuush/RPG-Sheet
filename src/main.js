@@ -13,20 +13,15 @@ let win;
 const { createMenu } = require("./services/menu");
 
 let fileToOpen = null;
+let readyToReceive = false;
 
-// Attempt to bind file opening #2
+// Attempt to bind file opening
 app.on("will-finish-launching", () => {
   // Event fired When someone drags files onto the icon while your app is running
   app.on("open-file", (event, file) => {
     console.log("Requested file open : " + file);
-    if (win && app.isReady()) {
-      if (win.webContents.isLoading()) {
-        win.webContents.on("did-finish-load", () => {
-          win.webContents.send("response-opened-file", fileToOpen);
-        });
-      } else {
-        win.webContents.send("response-opened-file", fileToOpen);
-      }
+    if (win && readyToReceive) {
+      win.webContents.send("response-opened-file", fileToOpen);
     } else {
       fileToOpen = file;
     }
@@ -85,5 +80,6 @@ const { ipcMain } = require("electron");
 
 // Attach listener in the main process with the given ID
 ipcMain.on("request-opened-file", (event) => {
+  readyToReceive = true;
   event.reply("response-opened-file", fileToOpen);
 });
