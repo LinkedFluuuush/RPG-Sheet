@@ -1,19 +1,22 @@
 "use strict";
 
 const { app, net, shell, dialog, BrowserWindow, Menu } = require("electron");
+const exec = require("child_process").spawn;
+var fs = require("fs");
+
+const currentVersionInfo = require("../../package.json");
+
 const gitHubProtocol = "https:";
 const gitHubHostname = "api.github.com";
 const latestReleaseEndpoint = "/repos/LinkedFluuuush/RPG-Sheet/releases/latest";
-const exec = require("child_process").spawn;
-const currentVersionInfo = require("../../package.json");
-var fs = require("fs");
+const localUpdateInfoFile = app.getAppPath() + "/updateInfo.json";
 
 var isWin = process.platform === "win32";
 var isMac = process.platform === "darwin";
 var isSixtyFour = process.arch === "x64" ? true : false;
 
 const handleAutoUpdate = () => {
-  return new Promise((resolve, reject) => {
+  return new Promise((resolve) => {
     pullGitVersions()
       .then((latestData) => {
         let latest = latestData.data;
@@ -60,41 +63,74 @@ const handleAutoUpdate = () => {
         }
       })
       .catch((error) => {
-        reject(error);
+        console.log(error);
+        resolve(false);
       });
   });
 };
 
 const pullGitVersions = () => {
   return new Promise((resolve, reject) => {
-    let gitHubRequest = net.request({
-      method: "GET",
-      protocol: gitHubProtocol,
-      hostname: gitHubHostname,
-      path: latestReleaseEndpoint,
-    });
+    let latest;
+    if (fs.existsSync(localUpdateInfoFile)) {
+      let localUpdateInfo = require(localUpdateInfoFile);
 
-    gitHubRequest.setHeader("Accept", "application/vnd.github.v3+json");
+      console.log(new Date(localUpdateInfo.pullDate).addDays(1).toISOString());
+      console.log(new Date().toISOString());
+      if (new Date(localUpdateInfo.pullDate).addDays(1) > new Date()) {
+        latest = localUpdateInfo.latest;
+      }
+    }
 
-    gitHubRequest.on("response", (response) => {
-      let bodyData = "";
-      response.on("data", (chunk) => {
-        bodyData += chunk;
+    if (!latest) {
+      console.log("Pulling github for latest version");
+      let gitHubRequest = net.request({
+        method: "GET",
+        protocol: gitHubProtocol,
+        hostname: gitHubHostname,
+        path: latestReleaseEndpoint,
       });
-      response.on("end", () => {
-        if (response.statusCode !== 200) {
-          reject({ status: response.statusCode, data: bodyData });
-        } else {
-          let latest = JSON.parse(bodyData);
-          console.log("Latest version : " + latest.name);
 
-          resolve({ status: response.statusCode, data: latest });
-        }
+      gitHubRequest.setHeader("Accept", "application/vnd.github.v3+json");
+
+      gitHubRequest.on("response", (response) => {
+        let bodyData = "";
+        response.on("data", (chunk) => {
+          bodyData += chunk;
+        });
+        response.on("end", () => {
+          if (response.statusCode !== 200) {
+            reject({ status: response.statusCode, data: bodyData });
+          } else {
+            let latest = JSON.parse(bodyData);
+            console.log("Latest version : " + latest.name);
+
+            saveLocalLatestInfo(latest);
+            resolve({ status: response.statusCode, data: latest });
+          }
+        });
       });
-    });
 
-    gitHubRequest.end();
+      gitHubRequest.end();
+    } else {
+      console.log("Latest version found from file");
+      resolve({ status: 200, data: latest });
+    }
   });
+};
+
+const saveLocalLatestInfo = (latest) => {
+  fs.writeFile(
+    localUpdateInfoFile,
+    JSON.stringify({
+      latest: latest,
+      pullDate: new Date().toISOString(),
+    }),
+    (err) => {
+      if (err) throw err;
+      console.log("The file has been saved!");
+    }
+  );
 };
 
 const downloadLatest = (releaseInstallers) => {
@@ -219,4 +255,10 @@ function showProgress(received, total, win) {
 }
 module.exports = {
   handleAutoUpdate,
+};
+
+Date.prototype.addDays = function (days) {
+  var date = new Date(this.valueOf());
+  date.setDate(date.getDate() + days);
+  return date;
 };
