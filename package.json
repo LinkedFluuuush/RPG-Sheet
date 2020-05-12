@@ -1,7 +1,7 @@
 {
   "name": "rpgsheet",
   "productName": "rpgsheet",
-  "version": "0.3.2-alpha",
+  "version": "0.3.2",
   "titleName": "RPG Sheet",
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
@@ -12,6 +12,10 @@
     "make": "electron-forge make --arch=all",
     "publish": "electron-forge publish",
     "lint": "eslint src"
+  },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LinkedFluuuush/RPG-Sheet.git"
   },
   "keywords": [],
   "author": "linked",
@@ -80,7 +84,8 @@
     "electron-squirrel-startup": "^1.0.0",
     "file-type": "^14.2.0",
     "jquery": "^3.5.0",
-    "jquery-color": "^3.0.0-alpha.1"
+    "jquery-color": "^3.0.0-alpha.1",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.50",

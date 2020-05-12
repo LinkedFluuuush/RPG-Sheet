@@ -11,6 +11,8 @@ const { app, BrowserWindow } = require("electron");
 let win;
 
 const { createMenu } = require("./services/menu");
+const { handleAutoUpdate } = require("./services/autoUpdate");
+// require("update-electron-app")();
 
 let fileToOpen = null;
 let readyToReceive = false;
@@ -32,36 +34,48 @@ app.on("will-finish-launching", () => {
 });
 
 function createWindow() {
-  // Cree la fenetre du navigateur.
-  win = new BrowserWindow({
-    width: 800,
-    height: 600,
-    webPreferences: {
-      nodeIntegration: true,
-      plugins: true,
-    },
+  handleAutoUpdate().then((hasUpdated) => {
+    console.log("Update handled");
+    if (!hasUpdated) {
+      // Cree la fenetre du navigateur.
+      win = new BrowserWindow({
+        width: 800,
+        height: 600,
+        webPreferences: {
+          nodeIntegration: true,
+          plugins: true,
+        },
+      });
+
+      createMenu();
+
+      console.log(
+        "Application launched with arguments : " + JSON.stringify(process.argv)
+      );
+
+      if (app.isPackaged) {
+        console.log("Running in prod env");
+        if (process.argv.length > 1) {
+          fileToOpen = process.argv[1];
+        }
+      } else {
+        console.log("Running in dev env");
+        if (process.argv.length > 2) {
+          fileToOpen = process.argv[2];
+        }
+      }
+
+      // et charger le fichier index.html de l'application.
+      win.loadFile("./src/view/index.html");
+    } else {
+      console.log("Updated, will launch updated version...");
+    }
+
+    // Quitter si toutes les fenêtres ont été fermées.
+    app.on("window-all-closed", () => {
+      app.quit();
+    });
   });
-
-  createMenu();
-
-  console.log(
-    "Application launched with arguments : " + JSON.stringify(process.argv)
-  );
-
-  if (app.isPackaged) {
-    console.log("Running in prod env");
-    if (process.argv.length > 1) {
-      fileToOpen = process.argv[1];
-    }
-  } else {
-    console.log("Running in dev env");
-    if (process.argv.length > 2) {
-      fileToOpen = process.argv[2];
-    }
-  }
-
-  // et charger le fichier index.html de l'application.
-  win.loadFile("./src/view/index.html");
 }
 
 // Cette méthode sera appelée quand Electron aura fini
@@ -71,7 +85,7 @@ app.whenReady().then(createWindow);
 
 // Quitter si toutes les fenêtres ont été fermées.
 app.on("window-all-closed", () => {
-  app.quit();
+  // app.quit();
 });
 
 // Dans ce fichier, vous pouvez inclure le reste de votre code spécifique au processus principal. Vous pouvez également le mettre dans des fichiers séparés et les inclure ici.
