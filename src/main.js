@@ -65,6 +65,13 @@ function createWindow() {
         }
       }
 
+      win.on("resize", () => {
+        console.debug("Resize");
+        let code = "require('./scripts/zoom.js').resetZoom();";
+        console.debug("Executed " + code);
+        win.webContents.executeJavaScript(code);
+      });
+
       // et charger le fichier index.html de l'application.
       win.loadFile("./src/view/index.html");
     } else {
