@@ -224,7 +224,7 @@ const changeComponentType = (target) => {
     additionalCSS
   );
 
-  deleteTarget();
+  deleteTarget(target);
   deactivate();
   activate();
 };
