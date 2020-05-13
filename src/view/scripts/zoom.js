@@ -7,6 +7,8 @@ const constants = require("../../constants");
 let animFrameRequested = false;
 let zoomTimer = null;
 
+let zoomConstant = "height";
+
 const calculateHeight = () => {
   $.each($(".pageContainer"), (idx, elt) => {
     $(elt).height($(elt).width() / elt.backgroundRatio);
@@ -23,30 +25,35 @@ const zoomIn = (step = 50) => {
   $(".pageContainer").css("flex-basis", $(".pageContainer").width() + step);
   calculateHeight();
   updateAllInputsFontSize();
+  zoomConstant = null;
 };
 
 const zoomOut = (step = 50) => {
   $(".pageContainer").css("flex-basis", $(".pageContainer").width() - step);
   calculateHeight();
   updateAllInputsFontSize();
+  zoomConstant = null;
 };
 
 const zoomToWidth = () => {
   $(".pageContainer").css("flex-basis", $("#mainContent").innerWidth() - 10);
   calculateHeight();
   updateAllInputsFontSize();
+  zoomConstant = "width";
 };
 
 const zoomToNatural = () => {
   $(".pageContainer").css("flex-basis", $(".pageContainer")[0].originalWidth);
   calculateHeight();
   updateAllInputsFontSize();
+  zoomConstant = "natural";
 };
 
 const zoomToHeight = () => {
   $(".pageContainer").height($("#mainContent").innerHeight() - 10);
   calculateWidth();
   updateAllInputsFontSize();
+  zoomConstant = "height";
 };
 
 const updateAllInputsFontSize = () => {
@@ -151,6 +158,22 @@ const initZoomControls = () => {
   zoomToHeight();
 };
 
+const resetZoom = () => {
+  if (zoomConstant) {
+    switch (zoomConstant) {
+      case "width":
+        zoomToWidth();
+        break;
+      case "height":
+        zoomToHeight();
+        break;
+      case "natural":
+        zoomToNatural();
+        break;
+    }
+  }
+};
+
 module.exports = {
   initZoomControls,
   updateInputFontSize,
@@ -159,4 +182,5 @@ module.exports = {
   zoomToWidth,
   zoomToHeight,
   zoomToNatural,
+  resetZoom,
 };
