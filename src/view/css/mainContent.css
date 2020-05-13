@@ -51,7 +51,8 @@ body {
 }
 
 .pageContainer input,
-textarea {
+textarea,
+div.unscrollable {
   margin: 0;
   resize: none;
   background-color: transparent;
@@ -59,6 +60,14 @@ textarea {
   border: none;
   padding: 0;
   font-family: sans-serif;
+  border-left: 1px solid grey;
+  border-top: 1px solid grey;
+}
+
+.pageContainer input:focus,
+textarea:focus,
+div.unscrollable:focus {
+  border: none;
 }
 
 .optionsDiv {
