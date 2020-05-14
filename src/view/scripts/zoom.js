@@ -83,13 +83,15 @@ const updateInputFontSize = (target, minSize = 0) => {
   $(target).css("padding-top", "0");
 
   if ($(target).val().length > 0) {
-    while (target.scrollHeight <= target.clientHeight) {
+    while (target.scrollHeight <= target.clientHeight &&
+      Number($(target).css("font-size").replace('px', '')) < 5000) {
       $(target).css("font-size", "+=2");
     }
 
     while (
       target.scrollHeight > target.clientHeight &&
-      Number($(target).css("font-size").replace("px", "")) > minSize
+      Number($(target).css("font-size").replace("px", "")) > minSize &&
+      Number($(target).css("font-size").replace('px', '')) > 1
     ) {
       $(target).css("font-size", "-=2");
     }
