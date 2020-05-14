@@ -3,6 +3,7 @@
 const $ = require("jquery");
 const constants = require("../../constants");
 const zoomManager = require("./zoom");
+const { addState } = require("./undoRedo");
 
 const calculatePercentPosition = (page, position) => {
   return {
@@ -126,6 +127,17 @@ const addComponent = (
       newElement.css(cssProp.prop, cssProp.value);
     }
   }
+
+  newElement
+    .on("focusin", "input", function () {
+      $(this).data("val", $(this).val());
+    })
+    .on("change", "input", function () {
+      let val = $(this).val();
+      $(this).val($(this).data("val"));
+      addState($(this));
+      $(this).val(val);
+    });
 
   $(page).append(newElement);
   return newElement;

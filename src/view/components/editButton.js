@@ -5,6 +5,7 @@ let constants = require("../../constants");
 let components = require("../scripts/components");
 let helper = require("./helper");
 const remote = require("electron").remote;
+const { addState } = require("../scripts/undoRedo");
 
 const selfId = constants.TOOLS.EDIT;
 
@@ -151,6 +152,8 @@ const resizeTarget = (target, direction, step = 5) => {
 };
 
 const updatePosition = (target) => {
+  addState($(target));
+
   $(target).css("left", $("#hPosition").val() / 100 + "%");
   $(target).css("top", $("#vPosition").val() / 100 + "%");
   $(target).css("width", $("#hSize").val() / 100 + "%");

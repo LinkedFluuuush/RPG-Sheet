@@ -75,8 +75,20 @@ const createMenu = () => {
     {
       label: "Edition",
       submenu: [
-        { role: "undo" },
-        { role: "redo" },
+        {
+          label: "Undo",
+          accelerator: "CommandOrControl+Z",
+          click: (menuItem, window) => {
+            undoAction(window);
+          },
+        },
+        {
+          label: "Redo",
+          accelerator: "CommandOrControl+Shift+Z",
+          click: (menuItem, window) => {
+            redoAction(window);
+          },
+        },
         { type: "separator" },
         { role: "cut" },
         { role: "copy" },
@@ -283,6 +295,20 @@ const zoomAction = (window, option) => {
       break;
   }
 
+  console.debug("Executed " + code);
+  window.webContents.executeJavaScript(code);
+};
+
+const undoAction = (window) => {
+  console.debug("Requested undo");
+  let code = "require('./scripts/undoRedo.js').undo();";
+  console.debug("Executed " + code);
+  window.webContents.executeJavaScript(code);
+};
+
+const redoAction = (window) => {
+  console.debug("Requested redo");
+  let code = "require('./scripts/undoRedo.js').redo();";
   console.debug("Executed " + code);
   window.webContents.executeJavaScript(code);
 };
