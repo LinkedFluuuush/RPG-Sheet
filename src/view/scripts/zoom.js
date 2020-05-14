@@ -94,11 +94,14 @@ const updateInputFontSize = (target, minSize = 0) => {
       $(target).css("font-size", "-=2");
     }
 
+    $(target).css("font-size", "-=1");
+
     let placeholderSpan = $("<div>");
     placeholderSpan.css("visibility", "hidden");
     placeholderSpan.css("width", $(target).width());
     placeholderSpan.css("height", "fit-content");
     placeholderSpan.css("font-size", $(target).css("font-size"));
+    placeholderSpan.css("border", "1px solid black");
 
     if ($(target).data("elementType") === constants.TOOLS.TEXTINPUT) {
       placeholderSpan.addClass("unscrollable");
