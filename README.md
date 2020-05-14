@@ -1,8 +1,9 @@
 # RPG-Sheet
 
-RPG-Sheet is an application to create your own RPG character sheets templates. Start by import a background image then place the text and checkbox tools you need. You can define the order you want for the fields, so tab navigation is as you want. 
+RPG-Sheet is an application to create your own RPG character sheets templates. Start by import a background image then place the text and checkbox tools you need. You can define the order you want for the fields, so tab navigation is as you want.
 
 You can consult shortcuts on this [page](https://github.com/LinkedFluuuush/RPG-Sheet/blob/develop/SHORTCUTS.md).
+The User Guide is available [here](https://github.com/LinkedFluuuush/RPG-Sheet/wiki/User-Guide)
 
 ## Availability
 
@@ -16,8 +17,8 @@ To contribute, submit a pull request with you modifications. Check below the pre
 
 ### Prerequisites
 
-* npm
-* nodejs
+- npm
+- nodejs
 
 ### Run the application
 
