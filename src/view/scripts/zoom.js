@@ -138,11 +138,48 @@ const zoomHandler = (event) => {
       animFrameRequested = true;
       requestAnimationFrame(function () {
         setTimeout(() => {
+          let target = $(event.target);
+
+          let offset = {
+            offsetX: event.offsetX / target.width(),
+            offsetY: event.offsetY / target.height(),
+          };
+
+          let offsetOnScreen = {
+            offsetX: event.clientX - $("#mainContent").position().left,
+            offsetY: event.clientY - $("#mainContent").position().top,
+          };
+
+          console.log(event);
+
           if (event.deltaY > 0) {
             zoomOut();
           } else {
             zoomIn();
           }
+
+          var offsetX = Math.max(
+            target.left +
+              $("#mainContent").scrollLeft() +
+              target.width() * offset.offsetX -
+              offsetOnScreen.offsetX,
+            0
+          );
+          var offsetY = Math.max(
+            target.position().top +
+              $("#mainContent").scrollTop() +
+              target.height() * offset.offsetY -
+              offsetOnScreen.offsetY,
+            0
+          );
+
+          console.log({ scrollTop: offsetY, scrollLeft: offsetX });
+
+          var speed = 0;
+          $("#mainContent").animate(
+            { scrollTop: offsetY, scrollLeft: offsetX },
+            speed
+          );
         }, 0);
 
         animFrameRequested = false;
