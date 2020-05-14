@@ -113,7 +113,7 @@ const pullGitVersions = () => {
 
       gitHubRequest.end();
     } else {
-      console.log("Latest version found from file");
+      console.log("Latest version found from file : " + localUpdateInfoFile);
       resolve({ status: 200, data: latest });
     }
   });
