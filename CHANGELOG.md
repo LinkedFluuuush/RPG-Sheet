@@ -1,3 +1,8 @@
+#v0.4.1-beta
+
+- _Bugfix_: Corrected bug on paste in text input field
+
+
 #v0.4.0-beta
 
 - _Feature_: Changed input display to center and zoom automatically for all texts
