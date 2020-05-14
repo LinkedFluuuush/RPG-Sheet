@@ -115,7 +115,9 @@ const createSheetData = (template = false) => {
           additionalCSS: additionalCSS,
         };
 
-        pageData.fields.push(fieldData);
+        if (fieldData.size.width > 0 && fieldData.size.height > 0) {
+          pageData.fields.push(fieldData);
+        }
       });
     sheetData.pages.push(pageData);
   });
