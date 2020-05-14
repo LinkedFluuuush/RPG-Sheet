@@ -16,6 +16,7 @@ const getElement = () => {
 
   let icon = $("<img>");
   icon.prop("src", "./img/edit.svg");
+  icon.css("width", "inherit");
 
   elt.append(icon);
 
@@ -25,20 +26,31 @@ const getElement = () => {
 const activate = () => {
   console.debug("Activating " + selfId);
   $("#" + selfId + " img").prop("src", "./img/editActivate.svg");
-  $(".pageContainer input,textarea").css("cursor", "default");
-  $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css(
+    "cursor",
+    "default"
+  );
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css(
+    "outline",
+    "red 2px solid"
+  );
 
-  $(".pageContainer input,textarea").mousedown((event) => {
-    event.preventDefault();
-  });
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).mousedown(
+    (event) => {
+      event.preventDefault();
+    }
+  );
 
-  $(".pageContainer input,textarea").click(clickFunction);
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).click(clickFunction);
 };
 
 const clickFunction = (event) => {
   event.preventDefault();
   closeOptionsDiv();
-  $(".pageContainer input,textarea").css("outline", "red 2px solid");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css(
+    "outline",
+    "red 2px solid"
+  );
 
   $(event.target).css("outline", "blue 2px solid");
 
@@ -54,11 +66,11 @@ const clickFunction = (event) => {
 const deactivate = () => {
   console.debug("Deactivating " + selfId);
   $("#" + selfId + " img").prop("src", "./img/edit.svg");
-  $(".pageContainer input,textarea").css("cursor", "");
-  $(".pageContainer input,textarea").css("outline", "");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css("cursor", "");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).css("outline", "");
 
-  $(".pageContainer input,textarea").off("mousedown");
-  $(".pageContainer input,textarea").off("click");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).off("mousedown");
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).off("click");
 
   closeOptionsDiv();
 };
@@ -82,7 +94,10 @@ const copyTarget = (target) => {
 };
 
 const alignToTarget = (target, direction) => {
-  $(".pageContainer input,textarea").off("click", clickFunction);
+  $(".pageContainer ." + constants.INPUT_TYPES.join(",.")).off(
+    "click",
+    clickFunction
+  );
   closeOptionsDiv();
   helper.handleComponentAlignment(target, direction, () => {
     deactivate();
@@ -209,7 +224,7 @@ const changeComponentType = (target) => {
     additionalCSS
   );
 
-  deleteTarget();
+  deleteTarget(target);
   deactivate();
   activate();
 };
@@ -436,13 +451,7 @@ const createOptionsDiv = (target, topWindow = false) => {
     fieldTypeSelect.prop("id", "fieldTypeSelect");
     let currentFieldType = components.getType(target);
 
-    let availableCompTypes = [
-      constants.TOOLS.TEXTINPUT,
-      constants.TOOLS.TEXTAREA,
-      constants.TOOLS.CHECKBOX,
-    ];
-
-    availableCompTypes.forEach((elt) => {
+    constants.INPUT_TYPES.forEach((elt) => {
       fieldTypeSelect.append(
         "<option value='" +
           elt +

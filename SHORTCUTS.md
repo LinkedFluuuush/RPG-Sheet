@@ -10,6 +10,7 @@
 | Alt+T        | Activates text-input tool           |
 | Ctrl+Alt+T   | Activates textarea tool             |
 | Alt+C        | Activates checkbox tool             |
+| Alt+O        | Activates order tool                |
 | Ctrl+Numpad+ | Zoom in                             |
 | Ctrl+Numpad- | Zoom out                            |
 | Ctrl+Numpad0 | Zoom to height                      |

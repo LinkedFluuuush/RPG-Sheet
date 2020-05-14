@@ -1,23 +1,30 @@
 {
   "name": "rpgsheet",
   "productName": "rpgsheet",
-  "version": "0.3.2-alpha",
+  "version": "0.4.0",
   "titleName": "RPG Sheet",
   "description": "RPG Sheet viewer and editor",
   "main": "src/main.js",
   "scripts": {
+    "start-open": "electron-forge start -- \"./examples/FicheVierge.rpSheet\"",
     "start": "electron-forge start",
     "package": "electron-forge package",
     "make": "electron-forge make --arch=all",
     "publish": "electron-forge publish",
     "lint": "eslint src"
   },
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/LinkedFluuuush/RPG-Sheet.git"
+  },
   "keywords": [],
   "author": "linked",
   "license": "MIT",
   "config": {
     "forge": {
-      "packagerConfig": {},
+      "packagerConfig": {
+        "extendInfo": "./Info.plist"
+      },
       "makers": [
         {
           "name": "@electron-forge/maker-squirrel",
@@ -35,13 +42,38 @@
         {
           "name": "@electron-forge/maker-deb",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "maintainer": "Jean-Baptiste Louvet-Daniel",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         },
         {
           "name": "@electron-forge/maker-rpm",
           "config": {
-            "name": "rpgsheet"
+            "name": "rpgsheet",
+            "options": {
+              "categories": [
+                "Game"
+              ],
+              "description": "RPG Sheet viewer and editor",
+              "homepage": "https://github.com/LinkedFluuuush/RPG-Sheet",
+              "mimeType": [
+                "application/x-rpsheet"
+              ],
+              "name": "rpgsheet",
+              "productName": "RPG Sheet"
+            }
           }
         }
       ]
@@ -51,7 +83,9 @@
     "electron-regedit": "^1.1.0",
     "electron-squirrel-startup": "^1.0.0",
     "file-type": "^14.2.0",
-    "jquery": "^3.5.0"
+    "jquery": "^3.5.0",
+    "jquery-color": "^3.0.0-alpha.1",
+    "update-electron-app": "^1.5.0"
   },
   "devDependencies": {
     "@electron-forge/cli": "^6.0.0-beta.50",

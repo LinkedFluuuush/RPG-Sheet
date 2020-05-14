@@ -1,0 +1,22 @@
+<html>
+  <head>
+    <title>update - RPG Sheet Editor</title>
+
+    <script>
+      const remote = require("electron").remote;
+
+      const { ipcRenderer } = require("electron");
+
+      ipcRenderer.on("updateProgress", (event, progress) => {
+        console.log("Received progress from main process : " + progress);
+        document.getElementById("update").value = progress;
+        document.getElementById("update").innerHTML = progress + "%";
+      });
+    </script>
+  </head>
+  <body style="display: flex;">
+    <progress style="margin: auto;" id="update" max="100" value="0">
+      0%
+    </progress>
+  </body>
+</html>

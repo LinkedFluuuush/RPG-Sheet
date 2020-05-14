@@ -42,21 +42,27 @@ const addComponent = (
 
   switch (type) {
     case constants.TOOLS.TEXTINPUT:
-      newElement = $("<textArea>");
-      newElement.prop("sheet.elementType", constants.TOOLS.TEXTINPUT);
+      newElement = $("<div>");
+      newElement.data("elementType", constants.TOOLS.TEXTINPUT);
+      newElement.prop("contenteditable", true);
       newElement.addClass("unscrollable");
       newElement.addClass(constants.TOOLS.TEXTINPUT);
+
+      newElement.on("keydown", preventEnter);
 
       newElement.on("input", textInputAutoSize);
 
       if (value) {
         newElement.text(value);
+        newElement.val(value);
       }
       break;
     case constants.TOOLS.TEXTAREA:
       newElement = $("<textArea>");
-      newElement.prop("sheet.elementType", constants.TOOLS.TEXTAREA);
+      newElement.data("elementType", constants.TOOLS.TEXTAREA);
       newElement.addClass(constants.TOOLS.TEXTAREA);
+
+      newElement.on("input", textAreaAutoSize);
 
       if (value) {
         newElement.text(value);
@@ -64,7 +70,7 @@ const addComponent = (
       break;
     case constants.TOOLS.CHECKBOX:
       newElement = $("<input>");
-      newElement.prop("sheet.elementType", constants.TOOLS.CHECKBOX);
+      newElement.data("elementType", constants.TOOLS.CHECKBOX);
       newElement.prop("type", "checkbox");
       newElement.addClass(constants.TOOLS.CHECKBOX);
 
@@ -140,8 +146,8 @@ const getAdditionalCSS = (elt) => {
 };
 
 const getType = (elt) => {
-  return $(elt).prop("sheet.elementType")
-    ? $(elt).prop("sheet.elementType")
+  return $(elt).data("elementType")
+    ? $(elt).data("elementType")
     : $(elt).prop("tagName").toLowerCase() === "textarea"
     ? constants.TOOLS.TEXTAREA
     : $(elt).prop("type") === "checkbox"
@@ -149,10 +155,19 @@ const getType = (elt) => {
     : constants.TOOLS.TEXTINPUT;
 };
 
+const preventEnter = (event) => {
+  return event.code !== "Enter";
+};
+
 const textInputAutoSize = (event) => {
   let target = event.target;
-  $(target).val($(target).val().replace("\n", ""));
+  $(target).val($(target).text());
   zoomManager.updateInputFontSize(target);
+};
+
+const textAreaAutoSize = (event) => {
+  let target = event.target;
+  zoomManager.updateInputFontSize(target, constants.MIN_AREA_SIZE);
 };
 
 module.exports = {

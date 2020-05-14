@@ -88,7 +88,7 @@ const createSheetData = (template = false) => {
     };
 
     $(elt)
-      .find("input,textarea")
+      .find("." + constants.INPUT_TYPES.join(",."))
       .each((idx, elt) => {
         let fieldValue;
 
@@ -115,7 +115,9 @@ const createSheetData = (template = false) => {
           additionalCSS: additionalCSS,
         };
 
-        pageData.fields.push(fieldData);
+        if (fieldData.size.width > 0 && fieldData.size.height > 0) {
+          pageData.fields.push(fieldData);
+        }
       });
     sheetData.pages.push(pageData);
   });
